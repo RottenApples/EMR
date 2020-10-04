@@ -21,37 +21,36 @@ public class GUI implements ActionListener, KeyListener{
 private Database db;	
 	
 private JFrame frame;
-private JPanel infoPanel, statusPanel, historyPanel, testPanel, historyDisplay, infoDisplay, statusDisplay, staffPanel, prescriptionPanel, listPanel;
+private JPanel infoPanel, adtPanel, testPanel, historyDisplay, infoDisplay, statusDisplay, staffPanel, prescriptionPanel, listPanel;
 private String searchName;
 private JTextField firstName, lastName, ohip, address, street, city, postal, date, height, weight, prescription, allergy, surgical, obsteric, family, immunization,
-preName, preDosage, preDate, physicianFirst, physicianLast, preRefill, preDirect, searchBar;
+preName, preDosage, physicianFirst, physicianLast, preRefill, preDirect, searchBar;
 private JLabel firstLabel, lastLabel, sexLabel, ohipLabel, addressLabel, streetLabel, cityLabel, postalLabel, dateLabel, heightLabel , weightLabel, 
-immuneLabel, hdLabel, nurseLabel, physicianLabel, adtLabel, unitLabel, prescriptionLabel, familyLabel, allergyLabel, surgicalLabel, obstericLabel, infoLabel, statusLabel,
-staffLabel, staffTitle, preNameLabel, preDosageLabel, preDateLabel, physicianFirstLabel, physicianLastLabel, preRefillLabel, preDirectLabel;
-private JButton createButton;	
+ adtLabel, unitLabel, infoLabel, statusLabel,
+staffLabel, staffTitle, preNameLabel, preDosageLabel, physicianFirstLabel, physicianLastLabel, preRefillLabel, preDirectLabel;
+private JButton createPatient, createStaff, createPrescription;	
 private JMenuBar menuBar;
 private JMenu menuFile, menuEdit;
 private JMenuItem menuNewPatient, menuNewPrescription, menuNewTest, menuNewStaff, menuOpen, menuSave, menuExit, menuChange;
 private JTabbedPane tab; 
 private JComboBox sex, adt, physician, nurse, unit, staff;
 private LineBorder border;
-private String[] physicianList = {"Mazie Vasquez", "Keon Caldwell", "Layla-Rose Velasquez", "Ana Alexander", "Freyja Fernandez", "Emil Irving",
-		"Jorgie Carroll", "Amal Chen", "Inaayah Black", "Safiya Connolly"};
-private String[] nurseList = {"Yvie Parrish", "Alivia Watt", "Yousaf Matthams","Ashlyn Leigh", "Martina Reeve","Teegan Espinoza",
-				"Ziggy Heath","Yaseen Bowman","Rayhan Blankenship",	"Talha Lin"};
 private	String[] adtList = {"Admit", "Discharge", "Transfer"};
 private	String[] unitList = {"CCU","ER", "ICU", "MICU", "NICU", "Oncology", "Open-Heart Recovery", "OR", "PACU", "Hospice", "PICU", "Pre-Op", "Rehabilitation", "SICU", 
 				"Step-Down Unit", "The Floor", "TICU"};
 private String[] staffList = {"Nurse", "Physician"};
-private String[] histResult, infoResult, statusResult;
-
+private String[] infoResult, statusResult;
+private JPanel list;
+private JTextArea reason;
+private JLabel bloodLabel, reasonLabel;
+private JTextField bloodType;
 
 private JScrollPane scroll;
 private String[] sexList = {"","Female", "Male"};
 
 	public GUI(Database db) {
-		db = new Database();
-		 histResult = new String[6]; 
+	this.db = db;
+		
 		 infoResult = new String[8]; 
 		 statusResult = new String[4]; 
 
@@ -61,36 +60,13 @@ private String[] sexList = {"","Female", "Male"};
 		frame = new JFrame();
 		infoPanel = new JPanel();
 		infoDisplay = new JPanel();
-		statusPanel = new JPanel();
+		adtPanel = new JPanel();
 		statusDisplay = new JPanel();
-		historyPanel = new JPanel();
-		historyDisplay = new JPanel();
 		testPanel = new JPanel();
-	    firstName = new JTextField();
-	    lastName = new JTextField();
-	    ohip = new JTextField();
-	    address = new JTextField();
-	    street = new JTextField();
-	    city = new JTextField();
-	    postal = new JTextField();
-	    date = new JTextField();
-	    height = new JTextField();
-	    weight = new JTextField();
+	    
 	    
 	    border = new LineBorder(Color.BLACK, 1);
 	    
-	    firstLabel = new JLabel("First Name");
-	    lastLabel = new JLabel("Last Name");
-	    sexLabel = new JLabel("Sex");
-	    ohipLabel = new JLabel("OHIP No.");
-	    addressLabel = new JLabel("Adress No.");
-	    streetLabel = new JLabel("Street");
-	    cityLabel = new JLabel("City");
-	    postalLabel = new JLabel("Postal Code");
-	    dateLabel = new JLabel("MM/DD/YYYY");
-	    heightLabel = new JLabel("Height (Imperial)");
-	    weightLabel = new JLabel("Weight (Imperial, lbs)");
-	  
 	    
 	    
 //	    scroll = new JScrollPane(comment, 
@@ -131,10 +107,8 @@ private String[] sexList = {"","Female", "Male"};
 
 		infoPanel.setLayout(null);
 		infoDisplay.setLayout(null);
-		statusPanel.setLayout(null);
+		adtPanel.setLayout(null);
 		statusDisplay.setLayout(null);
-		historyPanel.setLayout(null);
-		historyDisplay.setLayout(null);
 		
 		
 		//Menu
@@ -155,11 +129,34 @@ private String[] sexList = {"","Female", "Male"};
 /*
  *****************************Info Panel*********************************************		
  */
-		//Set Bounds
+		firstName = new JTextField();
+	    lastName = new JTextField();
+	    ohip = new JTextField();
+	    address = new JTextField();
+	    street = new JTextField();
+	    city = new JTextField();
+	    postal = new JTextField();
+	    date = new JTextField();
+	    height = new JTextField();
+	    weight = new JTextField();
+	    createPatient = new JButton("Create Patient");
+	    bloodType = new JTextField();
+	    bloodLabel = new JLabel("Blood Type");
 		
-		infoLabel = new JLabel("<html>First Name: "  + "<br/><br/>" + "Last Name: " +  "<br/><br/>" + "Date of Birth: "  + 
-     			"<br/><br/>" + "Sex: " + "<br/><br/>"+ "Ohip Number: "  + "<br/><br/>"+ "Address : "  +"</html>");
-		infoLabel.setBounds(10,-140,500,500);
+
+	    firstLabel = new JLabel("First Name");
+	    lastLabel = new JLabel("Last Name");
+	    sexLabel = new JLabel("Sex");
+	    ohipLabel = new JLabel("OHIP No.");
+	    addressLabel = new JLabel("Adress No.");
+	    streetLabel = new JLabel("Street");
+	    cityLabel = new JLabel("City");
+	    postalLabel = new JLabel("Postal Code");
+	    dateLabel = new JLabel("YYYY-MM-DD");
+	    heightLabel = new JLabel("Height (Imperial)");
+	    weightLabel = new JLabel("Weight (Imperial, lbs)");
+	  
+		//Set Bounds
 		infoDisplay.setBounds(600, 50,500,500);
 		firstLabel.setBounds(30, 50, 70, 20);
 		firstName.setBounds(30, 70, 160, 20);
@@ -183,9 +180,12 @@ private String[] sexList = {"","Female", "Male"};
 		city.setBounds(30, 280, 160, 20);
 		postalLabel.setBounds(250,260, 80, 20);
 		postal.setBounds(250, 280, 160, 20);
+		bloodType.setBounds(430,280,160,20);
+		bloodLabel.setBounds(430,260,160,20);
+		createPatient.setBounds(400,400,200, 30);
+		
 		
 		//Adding components	
-		infoDisplay.add(infoLabel);
 		infoDisplay.setBorder(border);
 	//	infoPanel.add(infoDisplay);
 	
@@ -207,7 +207,9 @@ private String[] sexList = {"","Female", "Male"};
 		infoPanel.add(height);
 		infoPanel.add(weightLabel);
 		infoPanel.add(weight);
-
+		infoPanel.add(bloodType);
+		infoPanel.add(bloodLabel);
+		infoPanel.add(createPatient);
 //******************************************************************************
 		
 		
@@ -218,48 +220,37 @@ private String[] sexList = {"","Female", "Male"};
  *************************Status Panel*******************************************		
  */
 		
-		 statusLabel = new JLabel("<html>ADT: "  + "<br/><br/>" + "Unit: " +  "<br/><br/>" + "Physician: "  + 
-	     			"<br/><br/>" + "Nurse: " +"</html>");
+		 statusLabel = new JLabel("<html>ADT: "  + "<br/><br/>" + "Unit: " +"</html>");
 		 statusDisplay.setBorder(border);
 		 adt = new JComboBox(adtList);
 		 unit = new JComboBox(unitList);
-		 physician = new JComboBox(physicianList);
-		 nurse = new JComboBox(nurseList);
-		
+		 reason = new JTextArea();
+		 reasonLabel = new JLabel("Reason: ");
+		 
 		 adt.setSelectedIndex(-1);
 		 unit.setSelectedIndex(-1);
-		 physician.setSelectedIndex(-1);
-		 nurse.setSelectedIndex(-1);
-		 
+			 
 		 adtLabel = new JLabel("ADT");
 		 unitLabel = new JLabel("Unit");
-		 nurseLabel = new JLabel("Nurse");
-		 physicianLabel = new JLabel("Physician");
-		 
-		statusDisplay.add(statusLabel);
 	
-		statusPanel.add(statusDisplay);
-		statusPanel.add(adtLabel);
-		statusPanel.add(unitLabel);
-		statusPanel.add(physicianLabel);
-		statusPanel.add(nurseLabel);
-		statusPanel.add(adt);
-		statusPanel.add(unit);
-		statusPanel.add(physician);
-		statusPanel.add(nurse);
+	
+		adtPanel.add(adtLabel);
+		adtPanel.add(unitLabel);
+		adtPanel.add(adt);
+		adtPanel.add(unit);
+		adtPanel.add(reason);
+		adtPanel.add(reasonLabel);
+
 	
 		
 		//Setting Bounds
 		statusLabel.setBounds(10,-170,500,500);
-		statusDisplay.setBounds(600, 50,500,500);
 		adtLabel.setBounds(30, 50, 70, 20);
 		adt.setBounds(30, 70, 160, 20);
 		unitLabel.setBounds(250, 50, 70, 20);
 		unit.setBounds(250, 70, 160, 20);
-		physicianLabel.setBounds(30, 100, 80, 20);
-		physician.setBounds(30, 120, 150, 20);
-		nurseLabel.setBounds(250,100, 80, 20);
-		nurse.setBounds(250, 120, 160, 20);
+		reasonLabel.setBounds(600,80, 50,20);
+		reason.setBounds(600,100, 500,500);
 
 //*************************************************************************		
 		
@@ -267,70 +258,16 @@ private String[] sexList = {"","Female", "Male"};
 		
 		
 		
-		
-/*
- ***************************History Panel***********************************		
- */
-		historyDisplay.setBorder(border);
-		prescriptionLabel = new JLabel("Prescription History");
-		familyLabel = new JLabel("Family History");
-		immuneLabel = new JLabel("Immunization History");
-		allergyLabel = new JLabel("Allergy History");
-		surgicalLabel = new JLabel("Surgical History");
-		obstericLabel = new JLabel("Obsteric History");
-		
-		prescription = new JTextField();
-		family = new JTextField();
-		allergy = new JTextField();
-		surgical = new JTextField();
-		obsteric = new JTextField();
-		immunization = new JTextField();
-		
-		
-		prescriptionLabel.setBounds(30, 50, 120, 20);
-		prescription.setBounds(30, 70, 160, 20);
-		immuneLabel.setBounds(250, 50, 120, 20);
-		immunization.setBounds(250, 70, 160, 20);
-		allergyLabel.setBounds(30, 100, 120, 20);
-		allergy.setBounds(30, 120, 160, 20);
-		surgicalLabel.setBounds(250,100, 120, 20);
-		surgical.setBounds(250, 120, 160, 20);
-		obstericLabel.setBounds(30,150, 120, 20);
-		obsteric.setBounds(30, 170, 160, 20);
-		familyLabel.setBounds(250,150, 80, 20);
-		family.setBounds(250, 170, 160, 20);
-	
-		
-		historyDisplay.setBounds(600, 50,500,500);
-		hdLabel = new JLabel("<html>Prescription History: "  + "<br/><br/>" + "Family History: " +  "<br/><br/>" + "Allergy History: "  + 
-     			"<br/><br/>" + "Surgical History: " + "<br/><br/>"+ "Obsteric History: "  + "<br/><br/>"+ "Immunization History: "  +"</html>");
-		historyDisplay.add(hdLabel);
-		
-		hdLabel.setBounds(10,-140,500,500);
-		
-		historyPanel.add(historyDisplay);
-		historyPanel.add(prescriptionLabel);
-		historyPanel.add(prescription);
-		historyPanel.add(immuneLabel);
-		historyPanel.add(immunization);
-		historyPanel.add(allergyLabel);
-		historyPanel.add(allergy);
-		historyPanel.add(surgicalLabel);
-		historyPanel.add(surgical);
-		historyPanel.add(familyLabel);
-		historyPanel.add(family);
-		historyPanel.add(obstericLabel);
-		historyPanel.add(obsteric);
 
-//***************************************************************
-	
 		
 		
 		
 /*
  **********************Staff Panel********************************
  */
+		createStaff = new JButton("Create Staff");
 		staffTitle = new JLabel("New Staff Member");
+		createStaff.setBounds(30,200,120,30);
 		staffTitle.setBounds(30, 20, 150, 20);
 		staffPanel.setBounds(0,30,1000,500);
 		staffPanel.setBorder(border);
@@ -342,6 +279,7 @@ private String[] sexList = {"","Female", "Male"};
 		staffPanel.add(staffTitle);
 		staffPanel.add(staffLabel);
 		staffPanel.add(staff);
+		staffPanel.add(createStaff);
 		
 		
 // ******************************************************************
@@ -354,27 +292,27 @@ private String[] sexList = {"","Female", "Male"};
  **********************Prescription Panel****************************		
  */
 		
-		
+		createPrescription = new JButton("Create Prescription");
 		preName = new JTextField();
-		preDosage = new JTextField();
-		preDate = new JTextField();
+		
 		physicianFirst = new JTextField();
 		physicianLast = new JTextField();
 		preRefill = new JTextField();
 		preDirect = new JTextField();
+		preDosage = new JTextField();
+
 		
-		preNameLabel = new JLabel("Physician Name");
-		preDosageLabel = new JLabel("Dosage:");
-		preDateLabel = new JLabel("Date");
+		preNameLabel = new JLabel("Prescription Name");
+		preDosageLabel = new JLabel("Dosage: ");
 		physicianFirstLabel = new JLabel("First Name");
 		physicianLastLabel = new JLabel("Last Name");
 		preRefillLabel = new JLabel("Refills: ");
-		preDirectLabel = new JLabel("Directions");
+		preDirectLabel = new JLabel("Directions: ");
 		
 		preNameLabel.setBounds(30, 50, 160, 20);
 		preName.setBounds(30, 70, 160, 20);
-		preDateLabel.setBounds(250, 50, 70, 20);
-		preDate.setBounds(250, 70, 160, 20);
+		preDosageLabel.setBounds(250, 50, 70, 20);
+		preDosage.setBounds(250, 70, 160, 20);
 		physicianFirstLabel.setBounds(30, 100, 80, 20);
 		physicianFirst.setBounds(30, 120, 160, 20);
 		physicianLastLabel.setBounds(250,100, 80, 20);
@@ -384,11 +322,10 @@ private String[] sexList = {"","Female", "Male"};
 		preRefill.setBounds(430, 120, 160, 20);
 		preDirectLabel.setBounds(30,160, 150, 20);
 		preDirect.setBounds(30, 180, 160, 20);
-		
+		createPrescription.setBounds(30,200,200,30);
 		
 		prescriptionPanel.add(preName); 
 		prescriptionPanel.add(preDosage); 
-		prescriptionPanel.add(preDate);
 		prescriptionPanel.add(physicianFirst);
 		prescriptionPanel.add(physicianLast);
 		prescriptionPanel.add(preRefill);
@@ -396,11 +333,12 @@ private String[] sexList = {"","Female", "Male"};
 		
 		prescriptionPanel.add(preNameLabel);
 		prescriptionPanel.add(preDosageLabel); 
-		prescriptionPanel.add(preDateLabel);
+		prescriptionPanel.add(preDosage);
 		prescriptionPanel.add(physicianFirstLabel); 
 		prescriptionPanel.add(physicianLastLabel); 
 		prescriptionPanel.add(preRefillLabel);
 		prescriptionPanel.add(preDirectLabel);
+		prescriptionPanel.add(createPrescription);
 
 //*************************************************************************
 		
@@ -413,14 +351,17 @@ private String[] sexList = {"","Female", "Male"};
 		
 		listPanel = new JPanel();
 		listPanel.setVisible(false);
+	
+		
+		
+		  
 		
 //*************************************************************************		
 		
 		
 		
 		tab.addTab("Info", infoPanel);
-		tab.addTab("Status", statusPanel);
-		tab.addTab("History", historyPanel);
+		tab.addTab("ADT", adtPanel);
 		tab.setBounds(0,30,1280,690);
 		
 		prescriptionPanel.setBounds(0,30,1280,690);
@@ -449,8 +390,11 @@ private String[] sexList = {"","Female", "Male"};
 		menuSave.addActionListener(this);
 		menuExit.addActionListener(this);
 		menuChange.addActionListener(this);
+		createPatient.addActionListener(this);
+		createStaff.addActionListener(this);
+		createPrescription.addActionListener(this);
 		
-		
+	/*	
 		firstName.addKeyListener(this);
 		lastName.addKeyListener(this);
 		date.addKeyListener(this);
@@ -466,16 +410,59 @@ private String[] sexList = {"","Female", "Male"};
 		surgical.addKeyListener(this);
 		obsteric.addKeyListener(this);
 		immunization.addKeyListener(this);
-		
+	*/	
 		adt.addActionListener(this);
 		unit.addActionListener(this);
-		physician.addActionListener(this);
-		nurse.addActionListener(this);
+	
 	}
 
+/*
+ **************************Action Performed****************************************************
+ */
 	
 	
 	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == createPatient) {
+			//height fix
+			
+			String result[] = new String[13];
+			result[1] = firstName.getText();
+			result[2] = lastName.getText();
+			result[3] = ohip.getText();
+			result[4] = date.getText();
+			result[5] = sex.getSelectedItem().toString();
+			result[6] = height.getText();
+			result[7] = weight.getText();
+			result[8] = bloodType.getText();
+			result[9] = address.getText()+" "+street.getText()+" "+city.getText()+" "+ postal.getText();
+			result[10] = adt.getSelectedItem().toString();
+			result[11] = unit.getSelectedItem().toString();
+			result[12] = reason.getText();
+			db.createPatient(result);
+		}
+		
+		if(e.getSource() == createStaff) {
+			String result[] = new String[3];
+			result[0] = firstName.getText();
+			result[1] = lastName.getText();
+			result[2] = staff.getSelectedItem().toString();
+	
+		
+			db.createStaff(result);
+		}
+		
+		if(e.getSource() == createPrescription) {
+			String result[] =  new String[6];
+			result[0] = preName.getText(); 
+			result[1] = preDosage.getText(); 
+			result[2] = physicianFirst.getText(); 
+			result[3] = physicianLast.getText(); 
+			result[4] = preRefill.getText(); 
+			result[5] = preDirect.getText(); 
+			db.createPrescription(result);
+			
+		}
+		
 		if(e.getSource() == menuNewPatient) {
 			tab.setVisible(true);
 			staffPanel.setVisible(false);
@@ -550,19 +537,10 @@ private String[] sexList = {"","Female", "Male"};
 		if(e.getSource() == adt ||e.getSource() == unit ||e.getSource() == physician||e.getSource() == nurse ) {
 			if(adt.getSelectedIndex() == -1) {statusResult[0] = "";}else {statusResult[0] = adt.getSelectedItem().toString();}
 			if(unit.getSelectedIndex() == -1) {statusResult[1] = "";}else {statusResult[1] = unit.getSelectedItem().toString();}
-			if(physician.getSelectedIndex() == -1) {statusResult[2] = "";}else {statusResult[2] = "Dr. " +physician.getSelectedItem().toString();}
-			if(nurse.getSelectedIndex() == -1) {statusResult[3] = "";}else {statusResult[3] = nurse.getSelectedItem().toString();}
+	
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			statusLabel.setText("<html>ADT: " +statusResult[0] + "<br/><br/>" + "Unit: "+statusResult[1] +  "<br/><br/>" + "Physician: "  + 
-					statusResult[2]+"<br/><br/>" + "Nurse: " +statusResult[3] +"</html>");
+			statusLabel.setText("<html>ADT: " +statusResult[0] + "<br/><br/>" + "Unit: "+statusResult[1] 
+					 +"</html>");
 		}
 		
 		
@@ -578,13 +556,26 @@ private String[] sexList = {"","Female", "Male"};
 		
 	}
 	
+	
+
+// *********************************************************************************************************************************************'	
+ 
+	
+	
+	
+	
+/*
+ * ***************************************************************Key Pressed********************************************************************	
+ */
+	
+	
 	public void keyTyped(KeyEvent f) {}
 	public void keyReleased(KeyEvent f) {
 
 	}
 	public void keyPressed(KeyEvent f) {
 	     int key = f.getKeyCode();
-	     /*
+	     
 	     if (key == KeyEvent.VK_ENTER && (f.getSource() == firstName||f.getSource() == lastName || f.getSource() == sex || f.getSource() == date || f.getSource() == ohip
 	    		 ||f.getSource() == address || f.getSource() == street || f.getSource() == city || f.getSource() == postal )) { 
 
@@ -624,39 +615,10 @@ private String[] sexList = {"","Female", "Male"};
 	     	postal.setText("");
 	     }
 	     
-	     */
-	        
-	     
-	     if (key == KeyEvent.VK_ENTER && (f.getSource() == prescription||f.getSource() == family || f.getSource() == allergy || f.getSource() == surgical
-	    		 ||f.getSource() == obsteric || f.getSource() == immunization)) { 
-
-
-	    	 if(!(prescription.getText().equals(""))) {histResult[0] = prescription.getText();}
-	    	 if(!(family.getText().equals(""))) {histResult[1] = family.getText();}
-	    	 if(!(allergy.getText().equals(""))) {histResult[2] = allergy.getText();}
-	    	 if(!(surgical.getText().equals(""))) {histResult[3] = surgical.getText();}
-	    	 if(!(obsteric.getText().equals(""))) {histResult[4] = obsteric.getText();}
-	    	 if(!(immunization.getText().equals(""))) {histResult[5] = immunization.getText();}
 	     
 	        
-	     if(histResult[0] == null) {histResult[0] = "";}
-	     if(histResult[1] == null) {histResult[1] = "";}
-	     if(histResult[2] == null) {histResult[2] = "";}
-	     if(histResult[3] == null) {histResult[3] = "";}
-	     if(histResult[4] == null) {histResult[4] = "";}
-	     if(histResult[5] == null) {histResult[5] = "";}
 	     
-	     	hdLabel.setText("<html>Prescription History: " + histResult[0] + "<br/><br/>" + "Family History: " + histResult[1] + "<br/><br/>" + "Allergy History: " + histResult[2] + 
-	     			"<br/><br/>" + "Surgical History: " + histResult[3] + "<br/><br/>"+ "Obsteric History: " + histResult[4] + "<br/><br/>"+ "Immunization History: " + histResult[5] +"</html>");
 
-
-	     	prescription.setText("");
-	     	family.setText("");
-	     	allergy.setText("");
-	     	surgical.setText("");
-	     	obsteric.setText("");
-	     	immunization.setText("");
-	     	}
 	    
 	  
 	    
@@ -694,8 +656,7 @@ private String[] sexList = {"","Female", "Male"};
 		//8-11 statusPanel
 		result[8] = adt.getSelectedItem().toString();
 		result[9] = unit.getSelectedItem().toString();
-		result[10] = physician.getSelectedItem().toString();
-		result[11] = nurse.getSelectedItem().toString();
+	
 		
 		//12-17 historyPanel
 		result[12] = prescription.getText();
@@ -706,8 +667,6 @@ private String[] sexList = {"","Female", "Male"};
 		result[17] = immunization.getText();
 		
 		
-		//Create new record
-		db.create(result);
 		
 		return true;
 		}
