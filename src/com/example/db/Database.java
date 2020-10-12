@@ -59,8 +59,7 @@ public class Database {
 			stmt.execute();	
 
 			stmt2 =	conn.prepareCall("{call LastIndex(?)}");
-			stmt2.registerOutParameter(1, java.sql.Types.INTEGER);
-			stmt.setString(1, "@id");
+			stmt2.setInt(1, java.sql.Types.INTEGER);
 			ResultSet rs = stmt2.executeQuery();
 			
 
@@ -71,8 +70,8 @@ public class Database {
 			
 			
 			
-		   //      createDemographics(att);
-		     //    createADT(att);
+		         createDemographics(att);
+		         createADT(att);
 		       
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -127,14 +126,12 @@ public class Database {
 
 				try {
 
-				stmt = conn.prepareCall("CALL GetLocationID(?)");
+				stmt = conn.prepareCall("CALL GetLocationID(?,?)");
 				stmt.setString(1, att[11]);
-				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt.setString(1, "@id");
+				stmt.setInt(2, java.sql.Types.INTEGER);
 				
 				stmt1 = conn.prepareCall("CALL LastIndex(?)");
-				stmt1.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt1.setString(1, "@id");
+				stmt1.setInt(1, java.sql.Types.INTEGER);
 				
 
 				
@@ -151,9 +148,9 @@ public class Database {
 				if(att[10].equals("Admit")) {
 					stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
 					stmt2.setString(1, att[10]);
-					stmt2.setString(2, stamp);
-					stmt2.setString(3, null);
-					stmt2.setString(4, null);
+					stmt2.setTimestamp(2, java.sql.Timestamp.valueOf(stamp));
+					stmt2.setNull(3, java.sql.Types.TIMESTAMP);
+					stmt2.setNull(4, java.sql.Types.TIMESTAMP);
 					stmt2.setString(5,att[12]);
 					stmt2.setString(6,result);
 					stmt2.setString(7,result2);
@@ -167,9 +164,9 @@ public class Database {
 						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
 
 						stmt2.setString(1, att[10]);
-						stmt2.setString(2, null);
-						stmt2.setString(3, stamp);
-						stmt2.setString(4, null);
+						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
+						stmt2.setTimestamp(3, java.sql.Timestamp.valueOf(stamp));
+						stmt2.setNull(4, java.sql.Types.TIMESTAMP);
 						stmt2.setString(5,att[12]);
 						stmt2.setString(6,result);
 						stmt2.setString(7,result2);
@@ -183,9 +180,9 @@ public class Database {
 
 						
 						stmt2.setString(1, att[10]);
-						stmt2.setString(2, null);
-						stmt2.setString(3, null);
-						stmt2.setString(4, stamp);
+						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
+						stmt2.setNull(3, java.sql.Types.TIMESTAMP);
+						stmt2.setTimestamp(4, java.sql.Timestamp.valueOf(stamp));
 						stmt2.setString(5,att[12]);
 						stmt2.setString(6,result);
 						stmt2.setString(7,result2);
@@ -311,11 +308,8 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetStaff(?,?,?)}");
-				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(2, java.sql.Types.VARCHAR);
-				stmt.registerOutParameter(3, java.sql.Types.VARCHAR);
-				stmt.setString(1, "@PatientID");
+ 				stmt = conn.prepareCall("{CALL GetPatient(?,?,?)}");
+				stmt.setInt(1, java.sql.Types.INTEGER);
 				stmt.setString(2, "@FirstName");
 				stmt.setString(3, "@LastName");
 				
@@ -363,10 +357,7 @@ public class Database {
 			try {
 				
 				stmt = conn.prepareCall("{CALL GetStaff(?,?,?)}");
-				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(2, java.sql.Types.VARCHAR);
-				stmt.registerOutParameter(3, java.sql.Types.VARCHAR);
-				stmt.setString(1, "@StaffID");
+				stmt.setInt(1, java.sql.Types.INTEGER);
 				stmt.setString(2, "@FirstName");
 				stmt.setString(3, "@LastName");
 				
@@ -410,19 +401,13 @@ public class Database {
 			try {
 				
 				stmt = conn.prepareCall("{CALL GetPrescription(?,?,?,?,?,?,?)}");
-				stmt.registerOutParameter(2, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(3, java.sql.Types.VARCHAR);
-				stmt.registerOutParameter(4, java.sql.Types.DATE);
-				stmt.registerOutParameter(5, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(6, java.sql.Types.INTEGER);
 			
-				
 				stmt.setInt(1, id);
-				stmt.setString(2, "@IDOut");
+				stmt.setInt(2, java.sql.Types.INTEGER);
 				stmt.setString(3, "@PrescriptionName");
-				stmt.setString(4, "@PrescriptionDate");
-				stmt.setString(5, "@Dosage");
-				stmt.setString(6, "@Refill");
+				stmt.setDate(4, java.sql.Date.valueOf("2017-06-15"));
+				stmt.setInt(5, java.sql.Types.INTEGER);
+				stmt.setInt(6, java.sql.Types.INTEGER);
 				stmt.setString(7, "@Direction");
 				
 				ResultSet rs = stmt.executeQuery();
@@ -466,21 +451,15 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				stmt = conn.prepareCall("{CALL GetDemographics(?,?,?,?,?,?,?,?)}");
-				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(2, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(3, java.sql.Types.DATE);
-				stmt.registerOutParameter(4, java.sql.Types.VARCHAR);
-				stmt.registerOutParameter(5, java.sql.Types.VARCHAR);
-				stmt.registerOutParameter(6, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(7, java.sql.Types.CHAR);
 				
-				stmt.setString(1, "@id");
-				stmt.setString(2, "@ohip");
-				stmt.setString(3, "@DOB");
+				
+				stmt.setInt(1, java.sql.Types.INTEGER);
+				stmt.setInt(2, java.sql.Types.INTEGER);
+				stmt.setDate(3, java.sql.Date.valueOf("1998-12-12"));
 				stmt.setString(4, "@sex");
-				stmt.setString(5, "@height");
-				stmt.setString(6, "@weight");
-				stmt.setString(7, "@bloodtype");
+				stmt.setInt(5, java.sql.Types.INTEGER);
+				stmt.setInt(6, java.sql.Types.INTEGER);
+				stmt.setLong(7,'a');
 				stmt.setString(8, "@contact");
 				
 				
@@ -529,8 +508,8 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				stmt = conn.prepareCall("CALL PatientCount(?)");
-				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt.setString(1, "@count");
+			
+				stmt.setInt(1, java.sql.Types.INTEGER);
 				
 				
 				ResultSet rs = stmt.executeQuery();
@@ -559,8 +538,8 @@ public class Database {
 		   CallableStatement stmt;
 			try {
 				stmt = conn.prepareCall("CALL StaffCount(?)");
-				stmt.registerOutParameter(1, java.sql.Types.INTEGER);
-				stmt.setString(1, "@count");
+			
+				stmt.setInt(1, java.sql.Types.INTEGER);
 				
 				
 				ResultSet rs = stmt.executeQuery();
@@ -591,8 +570,7 @@ public class Database {
 			try {
 				stmt = conn.prepareCall("CALL PrescriptionCount(?,?)");
 				stmt.setInt(1, id);
-				stmt.registerOutParameter(2, java.sql.Types.INTEGER);
-				stmt.setString(2, "@count");
+				stmt.setInt(2, java.sql.Types.INTEGER);
 								
 				ResultSet rs = stmt.executeQuery();
 				
@@ -622,18 +600,14 @@ public class Database {
 			try {
 				
 				stmt = conn.prepareCall("CALL GetADT(?,?,?,?,?,?,?)");
-				stmt.registerOutParameter(2, java.sql.Types.INTEGER);
-				stmt.registerOutParameter(3, java.sql.Types.VARCHAR);
-				stmt.registerOutParameter(4, java.sql.Types.TIMESTAMP);
-				stmt.registerOutParameter(5, java.sql.Types.TIMESTAMP);
-				stmt.registerOutParameter(6, java.sql.Types.TIMESTAMP);
+			
 
 				stmt.setInt(1, id);
-				stmt.setString(2, "@IDOut");
+				stmt.setInt(2, java.sql.Types.INTEGER);
 				stmt.setString(3, "@adt");
-				stmt.setString(4, "@add");
-				stmt.setString(5, "@trans");
-				stmt.setString(6, "@dis");
+				stmt.setTimestamp(4, java.sql.Timestamp.valueOf("2002-01-19 00:00:00"));
+				stmt.setTimestamp(5, java.sql.Timestamp.valueOf("2002-01-19 00:00:00"));
+				stmt.setTimestamp(6, java.sql.Timestamp.valueOf("2002-01-19 00:00:00"));
 				stmt.setString(7, "@reason");
 				
 				stmt.execute();
@@ -677,8 +651,7 @@ public class Database {
 			try {
 				stmt = conn.prepareCall("CALL ADTCount(?,?)");
 				stmt.setInt(1, id);
-				stmt.registerOutParameter(2, java.sql.Types.INTEGER);
-				stmt.setString(2, "@count");
+				stmt.setInt(2, java.sql.Types.INTEGER);
 				
 				ResultSet rs = stmt.executeQuery();
 				
