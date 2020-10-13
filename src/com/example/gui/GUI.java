@@ -1,83 +1,102 @@
 /*
-  * @author: Martin Clement
+ * @author: Martin Clement
  */
 package com.example.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import com.example.db.Database;
 
-public class GUI implements ActionListener, KeyListener{
-private Database db;	
-	
-private JFrame frame;
-private JPanel infoPanel, adtPanel, testPanel, historyDisplay, infoDisplay, statusDisplay, staffPanel, prescriptionPanel, listPanel;
-private String searchName;
-private JTextField firstName, lastName, ohip, address, street, city, postal, date, height, weight, prescription, allergy, surgical, obsteric, family, immunization,
-preName, preDosage, physicianFirst, physicianLast, preRefill, preDirect, searchBar;
-private JLabel firstLabel, lastLabel, sexLabel, ohipLabel, addressLabel, streetLabel, cityLabel, postalLabel, dateLabel, heightLabel , weightLabel, 
- adtLabel, unitLabel, infoLabel, statusLabel,
-staffLabel, staffTitle, preNameLabel, preDosageLabel, physicianFirstLabel, physicianLastLabel, preRefillLabel, preDirectLabel;
-private JButton createPatient, createStaff, createPrescription;	
-private JMenuBar menuBar;
-private JMenu menuFile, menuEdit;
-private JMenuItem menuNewPatient, menuNewPrescription, menuNewTest, menuNewStaff, menuOpen, menuSave, menuExit, menuChange;
-private JTabbedPane tab; 
-private JComboBox sex, adt, physician, nurse, unit, staff;
-private LineBorder border;
-private	String[] adtList = {"Admit", "Discharge", "Transfer"};
-private	String[] unitList = {"CCU","ER", "ICU", "MICU", "NICU", "Oncology", "Open-Heart Recovery", "OR", "PACU", "Hospice", "PICU", "Pre-Op", "Rehabilitation", "SICU", 
-				"Step-Down Unit", "The Floor", "TICU"};
-private String[] staffList = {"Nurse", "Physician"};
-private String[] infoResult, statusResult;
-private JPanel list;
-private JTextArea reason;
-private JLabel bloodLabel, reasonLabel;
-private JTextField bloodType;
+public class GUI implements ActionListener{
+	private Database db;	
 
-private JScrollPane scroll;
-private String[] sexList = {"","Female", "Male"};
+	private JFrame frame;
+	private JPanel infoPanel, testPanel, historyDisplay, infoDisplay, statusDisplay, staffPanel, prescriptionPanel, listPatientPanel;
+	private String searchName;
+	private JTextField firstName, lastName, ohip, address, street, city, postal, date, height, weight, prescription, allergy, surgical, obsteric, family, immunization,
+	preName, preDosage, physicianFirst, physicianLast, preRefill, preDirect, searchBar;
+	private JLabel firstLabel, lastLabel, sexLabel, ohipLabel, addressLabel, streetLabel, cityLabel, postalLabel, dateLabel, heightLabel , weightLabel, 
+	adtLabel, unitLabel, infoLabel, statusLabel,
+	staffLabel, staffTitle, preNameLabel, preDosageLabel, physicianFirstLabel, physicianLastLabel, preRefillLabel, preDirectLabel;
+	private JButton createPatient, createStaff, createPrescription;	
+	private JMenuBar menuBar;
+	private JMenu menuFile, menuView;
+	private JMenuItem menuNewPatient, menuNewPrescription, menuNewTest, menuNewStaff, menuOpen, menuSave, menuExit, menuListPatient,
+	menuListStaff, menuListPrescription;
+	private JTabbedPane tab; 
+	private JComboBox sex, adt, physician, nurse, unit, staff, patient, staffName, bloodType;
+	private LineBorder border;
+	private	String[] adtList = {"Admit", "Transfer", "Discharge"};
+	private	String[] unitList = {"CCU","ER", "ICU", "MICU", "NICU", "Oncology", "Open-Heart Recovery", "OR", "PACU", "Hospice", "PICU", "Pre-Op", "Rehabilitation", "SICU", 
+			"Step-Down Unit", "The Floor", "TICU"};
+	private String[] staffList = {"Nurse", "Physician"};
+	private String[] bloodTypes = {"O+", "O-", "A+", "A-", "B+", "AB+", "AB-"};
+	private String[] infoResult, statusResult;
+	private JPanel list, listStaffPanel;
+	private JTextArea reason;
+	private JLabel bloodLabel, reasonLabel, listLabel;
+	private JTextField bloodTypeField;
+	private JLabel[] listLabels, listStaffLabel, listPrescriptionLabel;
+	private JButton[] deletePatient, deleteStaff, deletePrescription, detailPatient, adtPatient;
+	private String resultPatient[][] = null; 
+	private String resultStaff[][] = null;
+	private String resultPrescription[][] = null;
+	private int rowPatient = 0;
+	private int rowStaff =0;
+	private int rowPrescription =0;
+	private JPanel detailPanel, detailPanel2, detailPanel3;
+	private JTabbedPane detailTab;
+	private String[][] ADT;
+	private JSeparator split2;
+	private JLabel[] detailLabel;
+	private JScrollPane scrollPatient, scrollStaff;
+	private String[] sexList = {"","Female", "Male"};
+	private JLabel physicianNameLabel, patientNameLabel;
+	private JComboBox adt2, unit2;
+	private JButton change;
+	private int patientID;
+
+
 
 	public GUI(Database db) {
-	this.db = db;
-		
-		 infoResult = new String[8]; 
-		 statusResult = new String[4]; 
+		this.db = db;
 
-		
-		
+		infoResult = new String[8]; 
+		statusResult = new String[4]; 
+
+
+
 		//Initialize GUI
 		frame = new JFrame();
 		infoPanel = new JPanel();
-		infoDisplay = new JPanel();
-		adtPanel = new JPanel();
 		statusDisplay = new JPanel();
 		testPanel = new JPanel();
-	    
-	    
-	    border = new LineBorder(Color.BLACK, 1);
-	    
-	    
-	    
-//	    scroll = new JScrollPane(comment, 
-//	    		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-	    
-	    
-	    
-		
-	    menuBar = new JMenuBar();
+
+
+		border = new LineBorder(Color.BLACK, 1);
+
+
+
+
+
+
+
+		menuBar = new JMenuBar();
 		menuFile = new JMenu("File");
-		menuEdit = new JMenu("Edit");
+		menuView = new JMenu("View");
 		menuNewPatient = new JMenuItem("New Patient");
 		menuNewStaff = new JMenuItem("New Medical Staff");
 		menuNewPrescription = new JMenuItem("New Prescription");
@@ -85,12 +104,13 @@ private String[] sexList = {"","Female", "Male"};
 		menuOpen = new JMenuItem("Open");
 		menuSave = new JMenuItem("Save");
 		menuExit = new JMenuItem("Exit");
-		menuChange = new JMenuItem("Edit Patient");
+		menuListPatient = new JMenuItem("List Patients...");
+		menuListStaff = new JMenuItem("List Medical Staff...");
 
 
-		
+
 		sex = new JComboBox(sexList);
-		
+
 		staffPanel = new JPanel();
 		staffPanel.setVisible(false);
 		staffPanel.setLayout(null);
@@ -100,21 +120,17 @@ private String[] sexList = {"","Female", "Male"};
 		prescriptionPanel = new JPanel();
 		prescriptionPanel.setVisible(false);
 		prescriptionPanel.setLayout(null);
-		
-		tab = new JTabbedPane();
-		tab.setVisible(false);
+
 		frame.setLayout(null);
 
 		infoPanel.setLayout(null);
-		infoDisplay.setLayout(null);
-		adtPanel.setLayout(null);
 		statusDisplay.setLayout(null);
-		
-		
+
+
 		//Menu
 		menuBar.setSize(1280,30);
 		menuBar.add(menuFile);
-		menuBar.add(menuEdit);
+		menuBar.add(menuView);
 		menuFile.add(menuNewPatient);
 		menuFile.add(menuNewStaff);
 		menuFile.add(menuNewPrescription);
@@ -122,42 +138,51 @@ private String[] sexList = {"","Female", "Male"};
 		menuFile.add(menuOpen);
 		menuFile.add(menuSave);
 		menuFile.add(menuExit);
-		menuEdit.add(menuChange);
-		frame.add(menuBar);
-		
-		
-/*
- *****************************Info Panel*********************************************		
- */
-		firstName = new JTextField();
-	    lastName = new JTextField();
-	    ohip = new JTextField();
-	    address = new JTextField();
-	    street = new JTextField();
-	    city = new JTextField();
-	    postal = new JTextField();
-	    date = new JTextField();
-	    height = new JTextField();
-	    weight = new JTextField();
-	    createPatient = new JButton("Create Patient");
-	    bloodType = new JTextField();
-	    bloodLabel = new JLabel("Blood Type");
-		
+		menuView.add(menuListPatient);
+		menuView.add(menuListStaff);
 
-	    firstLabel = new JLabel("First Name");
-	    lastLabel = new JLabel("Last Name");
-	    sexLabel = new JLabel("Sex");
-	    ohipLabel = new JLabel("OHIP No.");
-	    addressLabel = new JLabel("Adress No.");
-	    streetLabel = new JLabel("Street");
-	    cityLabel = new JLabel("City");
-	    postalLabel = new JLabel("Postal Code");
-	    dateLabel = new JLabel("YYYY-MM-DD");
-	    heightLabel = new JLabel("Height (Imperial)");
-	    weightLabel = new JLabel("Weight (Imperial, lbs)");
-	  
+		frame.add(menuBar);
+
+
+		/*
+		 *****************************Info Panel*********************************************		
+		 */
+		firstName = new JTextField();
+		lastName = new JTextField();
+		ohip = new JTextField();
+		address = new JTextField();
+		street = new JTextField();
+		city = new JTextField();
+		postal = new JTextField();
+		date = new JTextField();
+		height = new JTextField();
+		weight = new JTextField();
+		createPatient = new JButton("Create Patient");
+		bloodType = new JComboBox(bloodTypes);
+		bloodType.setSelectedIndex(-1);
+		bloodLabel = new JLabel("Blood Type");
+
+
+		firstLabel = new JLabel("First Name");
+		lastLabel = new JLabel("Last Name");
+		sexLabel = new JLabel("Sex");
+		ohipLabel = new JLabel("OHIP No.");
+		addressLabel = new JLabel("Adress No.");
+		streetLabel = new JLabel("Street");
+		cityLabel = new JLabel("City");
+		postalLabel = new JLabel("Postal Code");
+		dateLabel = new JLabel("YYYY-MM-DD");
+		heightLabel = new JLabel("Height (Imperial)");
+		weightLabel = new JLabel("Weight (Imperial, lbs)");
+
+		unit = new JComboBox(unitList);
+		unitLabel = new JLabel("Unit");
+		reason = new JTextArea();
+		reason.setBorder(border);
+		reasonLabel = new JLabel("Reason: ");
+
+
 		//Set Bounds
-		infoDisplay.setBounds(600, 50,500,500);
 		firstLabel.setBounds(30, 50, 70, 20);
 		firstName.setBounds(30, 70, 160, 20);
 		lastLabel.setBounds(250, 50, 70, 20);
@@ -182,13 +207,16 @@ private String[] sexList = {"","Female", "Male"};
 		postal.setBounds(250, 280, 160, 20);
 		bloodType.setBounds(430,280,160,20);
 		bloodLabel.setBounds(430,260,160,20);
-		createPatient.setBounds(400,400,200, 30);
-		
-		
+		createPatient.setBounds(30,400,160, 30);
+		reasonLabel.setBounds(600,50, 50,20);
+		reason.setBounds(600,70,500,500);
+		unitLabel.setBounds(30,310, 80, 20);
+		unit.setBounds(30, 330, 160, 20);
+
+
 		//Adding components	
-		infoDisplay.setBorder(border);
-	//	infoPanel.add(infoDisplay);
-	
+		//	infoPanel.add(infoDisplay);
+
 		infoPanel.add(sexLabel);
 		infoPanel.add(sex);
 		infoPanel.add(ohipLabel);
@@ -210,67 +238,36 @@ private String[] sexList = {"","Female", "Male"};
 		infoPanel.add(bloodType);
 		infoPanel.add(bloodLabel);
 		infoPanel.add(createPatient);
-//******************************************************************************
-		
-		
-		
-		
-		
-/*
- *************************Status Panel*******************************************		
- */
-		
-		 statusLabel = new JLabel("<html>ADT: "  + "<br/><br/>" + "Unit: " +"</html>");
-		 statusDisplay.setBorder(border);
-		 adt = new JComboBox(adtList);
-		 unit = new JComboBox(unitList);
-		 reason = new JTextArea();
-		 reasonLabel = new JLabel("Reason: ");
-		 
-		 adt.setSelectedIndex(-1);
-		 unit.setSelectedIndex(-1);
-			 
-		 adtLabel = new JLabel("ADT");
-		 unitLabel = new JLabel("Unit");
-	
-	
-		adtPanel.add(adtLabel);
-		adtPanel.add(unitLabel);
-		adtPanel.add(adt);
-		adtPanel.add(unit);
-		adtPanel.add(reason);
-		adtPanel.add(reasonLabel);
+		infoPanel.add(reason);
+		infoPanel.add(reasonLabel);
+		infoPanel.add(unit);
+		infoPanel.add(unitLabel);
 
-	
-		
-		//Setting Bounds
-		statusLabel.setBounds(10,-170,500,500);
-		adtLabel.setBounds(30, 50, 70, 20);
-		adt.setBounds(30, 70, 160, 20);
-		unitLabel.setBounds(250, 50, 70, 20);
-		unit.setBounds(250, 70, 160, 20);
-		reasonLabel.setBounds(600,80, 50,20);
-		reason.setBounds(600,100, 500,500);
+		infoPanel.setVisible(false);
 
-//*************************************************************************		
-		
-		
-		
-		
-		
 
-		
-		
-		
-/*
- **********************Staff Panel********************************
- */
+		unit.setSelectedIndex(-1);
+
+
+
+		//*************************************************************************		
+
+
+
+
+
+
+
+
+
+		/*
+		 **********************Staff Panel********************************
+		 */
 		createStaff = new JButton("Create Staff");
 		staffTitle = new JLabel("New Staff Member");
 		createStaff.setBounds(30,200,120,30);
 		staffTitle.setBounds(30, 20, 150, 20);
-		staffPanel.setBounds(0,30,1000,500);
-		staffPanel.setBorder(border);
+		staffPanel.setBounds(0,30,1200,650);
 		staff = new JComboBox(staffList);
 		staff.setSelectedIndex(-1);
 		staffLabel = new JLabel("Staff");
@@ -280,99 +277,216 @@ private String[] sexList = {"","Female", "Male"};
 		staffPanel.add(staffLabel);
 		staffPanel.add(staff);
 		staffPanel.add(createStaff);
-		
-		
-// ******************************************************************
- 
-		
-		
-		
-		
-/*
- **********************Prescription Panel****************************		
- */
-		
+
+
+		// ******************************************************************
+
+
+
+
+
+		/*
+		 **********************Prescription Panel****************************		
+		 */
+
 		createPrescription = new JButton("Create Prescription");
 		preName = new JTextField();
-		
+
 		physicianFirst = new JTextField();
 		physicianLast = new JTextField();
 		preRefill = new JTextField();
 		preDirect = new JTextField();
 		preDosage = new JTextField();
 
-		
+		String[][] tempPatient;
+		tempPatient = db.getPatient();
+		String name[] = new String[tempPatient.length];
+
+		for(int i =0; i <tempPatient.length; i++){
+			name[i] =tempPatient[i][0]+" "+tempPatient[i][1]+" "+tempPatient[i][2]; ;
+
+		}
+
+		String[][] tempStaff;
+		tempStaff = db.getStaff();
+		String name2[] = new String[tempStaff.length];
+
+		for(int i =0; i <tempStaff.length; i++){
+			name2[i] =tempStaff[i][0]+" "+tempStaff[i][1]+" "+tempStaff[i][2]; ;
+
+		}
+
+
+
+
+
+
+		patient = new JComboBox(name);
+		staffName = new JComboBox(name2);
+
+
 		preNameLabel = new JLabel("Prescription Name");
 		preDosageLabel = new JLabel("Dosage: ");
-		physicianFirstLabel = new JLabel("First Name");
-		physicianLastLabel = new JLabel("Last Name");
+		patientNameLabel = new JLabel("Patient Name: ");
+		physicianNameLabel = new JLabel("Physician Name: ");
 		preRefillLabel = new JLabel("Refills: ");
 		preDirectLabel = new JLabel("Directions: ");
-		
+
 		preNameLabel.setBounds(30, 50, 160, 20);
 		preName.setBounds(30, 70, 160, 20);
 		preDosageLabel.setBounds(250, 50, 70, 20);
 		preDosage.setBounds(250, 70, 160, 20);
-		physicianFirstLabel.setBounds(30, 100, 80, 20);
-		physicianFirst.setBounds(30, 120, 160, 20);
-		physicianLastLabel.setBounds(250,100, 80, 20);
-		physicianLast.setBounds(250, 120, 160, 20);
-		
-		preRefillLabel.setBounds(430,100, 150, 20);
-		preRefill.setBounds(430, 120, 160, 20);
-		preDirectLabel.setBounds(30,160, 150, 20);
-		preDirect.setBounds(30, 180, 160, 20);
-		createPrescription.setBounds(30,200,200,30);
-		
+
+		preRefillLabel.setBounds(250,100, 150, 20);
+		preRefill.setBounds(250, 120, 160, 20);
+		preDirectLabel.setBounds(30,100, 150, 20);
+		preDirect.setBounds(30, 120, 160, 20);
+		patientNameLabel.setBounds(30,160, 150, 20);
+		patient.setBounds(30,180,150,20);
+		physicianNameLabel.setBounds(250,150,150,30);
+		staffName.setBounds(250,180,150,20);
+
+		createPrescription.setBounds(30,220,150,30);
+
 		prescriptionPanel.add(preName); 
 		prescriptionPanel.add(preDosage); 
-		prescriptionPanel.add(physicianFirst);
-		prescriptionPanel.add(physicianLast);
 		prescriptionPanel.add(preRefill);
 		prescriptionPanel.add(preDirect);
-		
+
 		prescriptionPanel.add(preNameLabel);
 		prescriptionPanel.add(preDosageLabel); 
 		prescriptionPanel.add(preDosage);
-		prescriptionPanel.add(physicianFirstLabel); 
-		prescriptionPanel.add(physicianLastLabel); 
 		prescriptionPanel.add(preRefillLabel);
 		prescriptionPanel.add(preDirectLabel);
 		prescriptionPanel.add(createPrescription);
+		prescriptionPanel.add(patientNameLabel);
+		prescriptionPanel.add(patient);
+		prescriptionPanel.add(physicianNameLabel);
+		prescriptionPanel.add(staffName);
+		//*************************************************************************
 
-//*************************************************************************
-		
 
-		
-		
-/*
- ****************************List Panel************************************ 		
- */
-		
-		listPanel = new JPanel();
-		listPanel.setVisible(false);
-	
-		
-		
-		  
-		
-//*************************************************************************		
-		
-		
-		
-		tab.addTab("Info", infoPanel);
-		tab.addTab("ADT", adtPanel);
-		tab.setBounds(0,30,1280,690);
-		
+
+
+		/*
+		 ****************************List Patient Panel************************************ 		
+		 */
+
+		listPatientPanel = new JPanel();
+		listPatientPanel.setLayout(null);
+		listPatientPanel.setVisible(true);
+		listLabel = new JLabel();
+		listPatientPanel.setPreferredSize(new Dimension(1000,1200));
+		scrollPatient = new JScrollPane(listPatientPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient.setBounds(0,30,1184,655);
+		scrollPatient.setVisible(false);
+
+		drawListPatient();
+
+		//*************************************************************************		
+
+
+		/*
+		 ****************************Detail Patient Panel************************************ 		
+		 */
+		detailPanel = new JPanel();
+		detailPanel.setLayout(null);
+		detailPanel.setVisible(true);
+		detailPanel2 = new JPanel();
+		detailPanel2.setLayout(null);
+		detailPanel2.setVisible(true);
+		detailPanel3 = new JPanel();
+		detailPanel3.setLayout(null);
+		detailPanel3.setVisible(true);
+
+		String resultDem[][] = null;
+
+		resultDem = db.getDemographics();
+		detailLabel = new JLabel[rowPatient];
+		for(int i =0; i<rowPatient; i++) {
+			detailLabel[i] = new JLabel("<html>"+resultPatient[i][1] + " " + resultPatient[i][2] + " <br/>OHIP: " 
+					+resultDem[i][0] +" <br/>Date of Birth: "+resultDem[i][1] +" <br/>Sex: "+resultDem[i][2] +" <br/>Height: "+resultDem[i][3] +" <br/>Weight: "+resultDem[i][4] +" <br/>Blood Type: "+resultDem[i][5] 
+							+" <br/>Address: " +resultDem[i][6]+"</html>");
+			detailLabel[i].setBounds(30,10,1200,150);
+		}
+
+
+
+
+
+
+		detailTab = new JTabbedPane();	
+		detailTab.addTab("Info", detailPanel);
+		detailTab.addTab("Prescription History", detailPanel2);
+		detailTab.addTab("ADT History", detailPanel3);
+		detailTab.setBounds(0,30,1280,690);
+		detailTab.setVisible(false);
+
+		//*************************************************************************		
+
+
+		/*
+		 ****************************List Staff Panel************************************ 		
+		 */
+
+		listStaffPanel = new JPanel();
+		listStaffPanel.setLayout(null);
+		listStaffPanel.setVisible(true);
+		listLabel = new JLabel();
+		listStaffPanel.setPreferredSize(new Dimension(1000,1200));
+		scrollStaff = new JScrollPane(listStaffPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollStaff.setBounds(0,30,1184,655);
+		scrollStaff.setVisible(false);
+		resultStaff = db.getStaff();
+		rowStaff = db.getStaffCount();
+		listStaffLabel = new JLabel[rowStaff];
+		deleteStaff = new JButton[rowStaff];
+
+		JSeparator split3 = new JSeparator();
+		split3.setOrientation(SwingConstants.HORIZONTAL); 
+
+		for(int i =0; i<rowStaff; i++) {
+			deleteStaff[i] = new JButton("Delete");
+			listStaffLabel[i] = new JLabel("<html> Physician: "+resultStaff[i][1] + " " + resultStaff[i][2]+"</html>");
+			listStaffLabel[i].setBounds(30,30*(i+1)*2,1200,20);
+			deleteStaff[i].setBounds(1000,70*(i+1)*2,80,20);
+			deleteStaff[i].addActionListener(this);
+			split3.setBounds(0,90*(i+1)*2,1200,10);
+
+			listStaffPanel.add(deleteStaff[i]);
+			listStaffPanel.add(listStaffLabel[i]);
+			listStaffPanel.add(split3);
+
+
+
+
+		}
+
+
+
+
+		//*************************************************************************		
+
+
+
+
+
+
+
+		infoPanel.setBounds(0,30,1280,690);
+
 		prescriptionPanel.setBounds(0,30,1280,690);
 		testPanel.setBounds(0,30,1280,690);
 
+		frame.add(detailTab);
 		frame.add(staffPanel);
-		frame.add(tab);
+		frame.add(infoPanel);
 		frame.add(prescriptionPanel);
 		frame.add(testPanel);
+		frame.add(scrollPatient);
+		frame.add(scrollStaff);
 
-		
+
 		//Window Preferences
 		frame.setTitle("Electronic Medical Records (EMR)");
 		frame.setBounds(0, 0, 1200, 720);
@@ -380,7 +494,7 @@ private String[] sexList = {"","Female", "Male"};
 		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
-		
+
 		//ActionListener
 		menuNewPatient.addActionListener(this);
 		menuNewStaff.addActionListener(this);
@@ -389,42 +503,27 @@ private String[] sexList = {"","Female", "Male"};
 		menuOpen.addActionListener(this);
 		menuSave.addActionListener(this);
 		menuExit.addActionListener(this);
-		menuChange.addActionListener(this);
+		menuListPatient.addActionListener(this);
+		menuListStaff.addActionListener(this);
 		createPatient.addActionListener(this);
 		createStaff.addActionListener(this);
 		createPrescription.addActionListener(this);
-		
-	/*	
-		firstName.addKeyListener(this);
-		lastName.addKeyListener(this);
-		date.addKeyListener(this);
-		sex.addKeyListener(this);
-		ohip.addKeyListener(this);
-		street.addKeyListener(this);
-		address.addKeyListener(this);
-		city.addKeyListener(this);
-		postal.addKeyListener(this);
-		prescription.addKeyListener(this);
-		family.addKeyListener(this);
-		allergy.addKeyListener(this);
-		surgical.addKeyListener(this);
-		obsteric.addKeyListener(this);
-		immunization.addKeyListener(this);
-	*/	
-		adt.addActionListener(this);
+
+
 		unit.addActionListener(this);
-	
+
 	}
 
-/*
- **************************Action Performed****************************************************
- */
-	
-	
+	/*
+	 **************************Action Performed****************************************************
+	 */
+
+
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == createPatient) {
 			//height fix
-			
+
+			try {
 			String result[] = new String[13];
 			result[1] = firstName.getText();
 			result[2] = lastName.getText();
@@ -433,42 +532,67 @@ private String[] sexList = {"","Female", "Male"};
 			result[5] = sex.getSelectedItem().toString();
 			result[6] = height.getText();
 			result[7] = weight.getText();
-			result[8] = bloodType.getText();
+			result[8] = bloodType.getSelectedItem().toString();
 			result[9] = address.getText()+" "+street.getText()+" "+city.getText()+" "+ postal.getText();
-			result[10] = adt.getSelectedItem().toString();
+			result[10] = "Admit";
 			result[11] = unit.getSelectedItem().toString();
 			result[12] = reason.getText();
-			db.createPatient(result);
+			
+			if(checkInfo()){
+				//db.createPatient(result);
+			}else {
+				JOptionPane.showMessageDialog(null, "Invalid Format.");
+			}
+			}catch(NullPointerException f) {
+				JOptionPane.showMessageDialog(null, "Invalid Format.");
+			}
+			
 		}
-		
+
 		if(e.getSource() == createStaff) {
 			String result[] = new String[3];
 			result[0] = firstName.getText();
 			result[1] = lastName.getText();
 			result[2] = staff.getSelectedItem().toString();
-	
-		
+
+
 			db.createStaff(result);
 		}
-		
+
 		if(e.getSource() == createPrescription) {
+			String tempPatientName, tempStaffName;
+			tempPatientName = patient.getSelectedItem().toString();
+			tempStaffName = staffName.getSelectedItem().toString();
+
+			String temp[] = new String[3];
+			String temp2[] = new String[3];
+
+			temp =tempPatientName.split(" ");
+			temp2=tempStaffName.split(" ");
+
+
 			String result[] =  new String[6];
 			result[0] = preName.getText(); 
 			result[1] = preDosage.getText(); 
-			result[2] = physicianFirst.getText(); 
-			result[3] = physicianLast.getText(); 
-			result[4] = preRefill.getText(); 
-			result[5] = preDirect.getText(); 
+			result[2] = preRefill.getText(); 
+			result[3] = preDirect.getText(); 
+			result[4] =	temp[0];
+			result[5] =	temp2[0];
+
+			System.out.println(result[0]+" "+result[1]+" "+result[2]+" "+result[3]+" "+result[4]+" "+result[5]);
 			db.createPrescription(result);
-			
+
 		}
-		
+
 		if(e.getSource() == menuNewPatient) {
-			tab.setVisible(true);
+			infoPanel.setVisible(true);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
+
 			infoPanel.add(firstLabel);
 			infoPanel.add(firstName);
 			infoPanel.add(lastLabel);
@@ -480,201 +604,353 @@ private String[] sexList = {"","Female", "Male"};
 			staffPanel.remove(lastName);
 
 		}
-		
+
 		if(e.getSource() == menuNewStaff) {
-			tab.setVisible(false);
+			infoPanel.setVisible(false);
+			staffPanel.setVisible(true);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			staffPanel.setVisible(true);
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
 
 			infoPanel.remove(firstLabel);
 			infoPanel.remove(firstName);
 			infoPanel.remove(lastLabel);
 			infoPanel.remove(lastName);
 
-			
+
 			staffPanel.add(firstLabel);
 			staffPanel.add(firstName);
 			staffPanel.add(lastLabel);
 			staffPanel.add(lastName);
-			
-			
+
+
 		}
-		
+
 		if(e.getSource() == menuNewPrescription) {
-			tab.setVisible(false);
+			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(true);
 			testPanel.setVisible(false);
-			
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
 		}
 		if(e.getSource() == menuNewTest) {
-			tab.setVisible(false);
+
+			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(true);
-			
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
+
 		}
-		
-		if(e.getSource() == menuOpen) {
-			
-			
-		}
-		
-		if(e.getSource() == menuSave) {
-			
-			
-			boolean isSaved = save();
-			
-			if(isSaved) {JOptionPane.showConfirmDialog(null, "Record Saved Sucessful.");}
-			else {JOptionPane.showConfirmDialog(null, "Failed Saved.");}
-			
-		}
+
+
+
 		if(e.getSource() == menuExit) {
 			System.exit(0);
 		}
-	
-		if(e.getSource() == adt ||e.getSource() == unit ||e.getSource() == physician||e.getSource() == nurse ) {
-			if(adt.getSelectedIndex() == -1) {statusResult[0] = "";}else {statusResult[0] = adt.getSelectedItem().toString();}
-			if(unit.getSelectedIndex() == -1) {statusResult[1] = "";}else {statusResult[1] = unit.getSelectedItem().toString();}
-	
-			
-			statusLabel.setText("<html>ADT: " +statusResult[0] + "<br/><br/>" + "Unit: "+statusResult[1] 
-					 +"</html>");
-		}
-		
-		
-		if(e.getSource() == menuChange) {
-			tab.setVisible(false);
+
+
+		if(e.getSource() == menuListPatient) {
+
+			infoPanel.setVisible(false);
+			detailTab.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			listPanel.setVisible(true);
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(true);
+
+			drawListPatient();
 		}
-		
-		
-		
-	}
-	
-	
-
-// *********************************************************************************************************************************************'	
- 
-	
-	
-	
-	
-/*
- * ***************************************************************Key Pressed********************************************************************	
- */
-	
-	
-	public void keyTyped(KeyEvent f) {}
-	public void keyReleased(KeyEvent f) {
-
-	}
-	public void keyPressed(KeyEvent f) {
-	     int key = f.getKeyCode();
-	     
-	     if (key == KeyEvent.VK_ENTER && (f.getSource() == firstName||f.getSource() == lastName || f.getSource() == sex || f.getSource() == date || f.getSource() == ohip
-	    		 ||f.getSource() == address || f.getSource() == street || f.getSource() == city || f.getSource() == postal )) { 
 
 
-	    	 if(!(firstName.getText().equals(""))) {infoResult[0] = firstName.getText();}
-	    	 if(!(lastName.getText().equals(""))) {infoResult[1] = lastName.getText();}
-	    	 if(!(date.getText().equals(""))) {infoResult[2] = date.getText();}
-	    	 if(!(ohip.getText().equals(""))) {infoResult[3] = ohip.getText();}
-	    	 if(!(address.getText().equals(""))) {infoResult[4] = address.getText();}
-	    	 if(!(street.getText().equals(""))) {infoResult[5] = street.getText();}
-	    	 if(!(city.getText().equals(""))) {infoResult[6] = city.getText();}
-	    	 if(!(postal.getText().equals(""))) {infoResult[7] = postal.getText();}
-	     
-	        
-	     if(infoResult[0] == null) {infoResult[0] = "";}
-	     if(infoResult[1] == null) {infoResult[1] = "";}
-	     if(infoResult[2] == null) {infoResult[2] = "";}
-	     if(infoResult[3] == null) {infoResult[3] = "";}
-	     if(infoResult[4] == null) {infoResult[4] = "";}
-	     if(infoResult[5] == null) {infoResult[5] = "";}
-	     if(infoResult[6] == null) {infoResult[6] = "";}
-	     if(infoResult[7] == null) {infoResult[7] = "";}
-
-	     
-	     	infoLabel.setText("<html>First Name: "  + infoResult[0]+ "<br/><br/>" + "Last Name: " +infoResult[1] + "<br/><br/>"  + "Date of Birth: "  +infoResult[2] +
-	     			"<br/><br/>" + "Sex: " +sex.getSelectedItem() + "<br/><br/>"+ "Ohip Number: " +infoResult[3] + "<br/><br/>"+ "Address : "  + infoResult[4] +" "
-	     					+ infoResult[5] +", " +infoResult[6]+", " +infoResult[7] + "</html>");
-
-
-	     	firstName.setText("");
-	     	lastName.setText("");
-	     	date.setText("");
-	     	ohip.setText("");
-	     	address.setText("");
-	     	street.setText("");
-	     	city.setText("");
-	     	postal.setText("");
-	     }
-	     
-	     
-	        
-	     
-
-	    
-	  
-	    
-	     
-	     
-	     
-	     
-	     }
+		if(e.getSource() == menuListStaff) {
+			infoPanel.setVisible(false);
+			detailTab.setVisible(false);
+			staffPanel.setVisible(false);
+			prescriptionPanel.setVisible(false);
+			testPanel.setVisible(false);
+			scrollPatient.setVisible(false);
+			scrollStaff.setVisible(true);
 
 
 
-	
-	
 
-	
-	public void toDisplay(String name) {
-		String[] attributes = db.getPatient(name);
-	}
-	
-	public boolean save() {
-		
-		if(isComplete()) {
-		String[] result = new String[18];
-		
-		//0-7 infoPanel
-		result[0] = firstName.getText();
-		result[1] = lastName.getText();
-		result[2] = date.getText();
-		result[3] = ohip.getText();
-		result[4] = address.getText();
-		result[5] = street.getText();
-		result[6] = city.getText();
-		result[7] = postal.getText();
-		
-		//8-11 statusPanel
-		result[8] = adt.getSelectedItem().toString();
-		result[9] = unit.getSelectedItem().toString();
-	
-		
-		//12-17 historyPanel
-		result[12] = prescription.getText();
-		result[13] = family.getText();
-		result[14] = allergy.getText();
-		result[15] = surgical.getText();
-		result[16] = obsteric.getText();
-		result[17] = immunization.getText();
-		
-		
-		
-		return true;
+
+
+
 		}
-			
-		return false;
-		
+
+
+
+		for(int i =0; i< rowPatient; i++) {
+			if(e.getSource() == deletePatient[i]) {
+
+				int id =Integer.parseInt(resultPatient[i][0]);
+
+
+				db.deletePatient(id);
+
+				drawListPatient();
+
+			}
+		}	
+
+		for(int i = 0; i< rowPatient; i++) {
+			if(e.getSource() == detailPatient[i]) {
+
+				detailPanel.removeAll();
+				prescriptionPanel.removeAll();
+				detailPanel3.removeAll();
+				infoPanel.setVisible(false);
+				detailTab.setVisible(true);			
+				staffPanel.setVisible(false);
+				prescriptionPanel.setVisible(false);
+				testPanel.setVisible(false);
+				scrollPatient.setVisible(false);
+				scrollStaff.setVisible(false);
+
+				int row = db.getADTCount(Integer.parseInt(resultPatient[i][0]));
+
+				ADT = new String[row][6];
+				ADT = db.getADT(Integer.parseInt(resultPatient[i][0]));
+				JLabel label2[] = new JLabel[row];
+
+
+
+				for(int j =0; j < row; j++) {
+
+					if(ADT[j][3] == null && ADT[j][4] == null) {
+						label2[j] = new JLabel("<html>"+" ADT: "+ADT[j][1] +" <br/>Admition Date: "+ADT[j][2]+" <br/> Reason: "+ADT[j][5]+ "</html>"); 
+					}
+
+					if(ADT[j][2] == null && ADT[j][4] == null) {
+						label2[j] = new JLabel("<html>"+"  ADT: "+ADT[j][1] +" <br/>Transfer Date: "+ADT[j][3]+" <br/> Reason: "+ADT[j][5]+ "</html>"); 
+					}
+
+
+					if(ADT[j][2] == null && ADT[j][3] == null) {
+						label2[j] = new JLabel("<html>"+"  ADT: "+ADT[j][1] +" <br/>Discharge Date: "+ADT[j][4]+" <br/> Reason: "+ADT[j][5]+ "</html>"); 
+					}
+					JSeparator split3 = new JSeparator();
+					split3.setBounds(0,(140+15*j)*(j+1),1200,20);
+					split3.setOrientation(SwingConstants.HORIZONTAL); 
+					label2[j].setBounds(30,(140+15*j)*(j+1),300,120);
+					detailPanel3.add(label2[j]);
+					detailPanel3.add(split3);
+
+				}
+
+
+
+
+				resultPrescription = db.getPrescription(i);
+				rowPrescription = db.getPrescriptionCount(i);
+				if(rowPrescription != 0) {
+					listPrescriptionLabel = new JLabel[rowPrescription];
+
+
+
+					listPrescriptionLabel[i] = new JLabel("<html> Prescription Name: "+resultPrescription[i][1] + " <br/> Date: " + resultPrescription[i][2] + " <br/> Dosage: " +resultPrescription[i][3] 
+							+ " <br/> Refills: " + resultPrescription[i][4]+ " <br/> Description: "+resultPrescription[i][5]+"</html>");
+					listPrescriptionLabel[i].setBounds(30,(140+15*i)*(i+1),300,120);
+					detailPanel2.add(listPrescriptionLabel[i]);
+					detailPanel2.add(split2);
+					split2 = new JSeparator();
+					split2.setBounds(0,(140+15*i)*(i+1),1200,20);
+					split2.setOrientation(SwingConstants.HORIZONTAL); 
+
+
+				}
+
+
+
+				detailPanel.add(detailLabel[i]);
+
+
+			}
+		}
+
+
+
+
+		for(int i = 0; i< rowPatient; i++) {
+			if(e.getSource() == adtPatient[i]) {
+
+				resultPatient = db.getPatient();
+
+
+				JDialog pane = new JDialog();
+
+
+				change = new JButton("Update");
+				change.addActionListener(this);
+
+				adt2 = new JComboBox(adtList);
+				unit2 = new JComboBox(unitList);
+
+				JLabel adtLabel = new JLabel("ADT: ");
+				JLabel unitLabel = new JLabel("Unit: ");
+				JLabel label = new JLabel("To");
+				JLabel name = new JLabel(resultPatient[i][1]+ " " + resultPatient[i][2]);
+
+
+				pane.add(adt2);
+				pane.add(unit2);
+				pane.add(adtLabel);
+				pane.add(unitLabel);
+				pane.add(label);
+				pane.add(name);
+				pane.add(change);
+
+				pane.setLayout(null);
+				pane.setVisible(true);
+				pane.setResizable(false);
+				pane.setLocationRelativeTo(frame);
+				pane.setBounds(600,300,350,200);
+				adt2.setBounds(30,80,100,20);
+				unit2.setBounds(200,80,100,20);
+				name.setBounds(30,0,200,20);
+				adtLabel.setBounds(30,60,100,20);
+				unitLabel.setBounds(200,60,100,20);
+				label.setBounds(150,80,100,20);
+				change.setBounds(110,110,100,20);
+				pane.setTitle("ADT Status");
+
+
+
+
+
+			}
+			if(e.getSource() == change) {
+
+				db.createADT(resultPatient[i][0].toString(), adt2.getSelectedItem().toString(), unit2.getSelectedItem().toString());
+
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		for(int i =0; i< rowStaff; i++) {
+			if(e.getSource() == deleteStaff[i]) {
+
+				int id =Integer.parseInt(resultStaff[i][0]);
+
+
+				db.deleteStaff(id);
+			}
+		}
+
+
+
+
 	}
-	
+
+
+
+	// *********************************************************************************************************************************************'	
+
+
+
+	public void drawListPatient() {
+		listPatientPanel.removeAll();
+		String resultDemographics[][] = null;
+		resultPatient = db.getPatient();
+		resultDemographics = db.getDemographics();
+		rowPatient = db.getPatientCount();
+		JSeparator[] split = new JSeparator[rowPatient];
+
+		listLabels = new JLabel[rowPatient];
+		deletePatient = new JButton[rowPatient];
+		detailPatient = new JButton[rowPatient];
+		adtPatient = new JButton[rowPatient];
+
+
+
+		for(int i =0; i<rowPatient; i++) {
+			split[i] = new JSeparator();
+
+			split[i].setOrientation(SwingConstants.HORIZONTAL); 
+
+			deletePatient[i] = new JButton("Delete");
+			detailPatient[i] = new JButton("Details");
+			adtPatient[i] = new JButton("ADT");
+
+			listLabels[i] = new JLabel("<html>"+resultPatient[i][1] + " " + resultPatient[i][2] + " <br/>OHIP: " 
+					+resultDemographics[i][0] +" <br/>Date of Birth: "+resultDemographics[i][1] +" <br/>Sex: "+resultDemographics[i][2] +" <br/>Height: "+resultDemographics[i][3] +" <br/>Weight: "+resultDemographics[i][4] +" <br/>Blood Type: "+resultDemographics[i][5] 
+							+" <br/>Address: " +resultDemographics[i][6]+"</html>");
+
+			if(i>0) {
+				listLabels[i].setBounds(30,(90+15*i)*(i+1),1200,150);
+				deletePatient[i].setBounds(1000,(140+15*i)*(i+1),80,20);
+				detailPatient[i].setBounds(300,(140+15*i)*(i+1),80,20);
+				adtPatient[i].setBounds(400,(140+15*i)*(i+1),80,20);
+
+			}else {listLabels[i].setBounds(30,10*(i+1),1200,150);
+			deletePatient[i].setBounds(1000,140,80,20);
+			detailPatient[i].setBounds(300,140,80,20);
+			adtPatient[i].setBounds(400,140,80,20);
+
+			}
+			deletePatient[i].addActionListener(this);
+			detailPatient[i].addActionListener(this);
+			adtPatient[i].addActionListener(this);
+			split[i].setBounds(0,90*(i+1)*2,1200,10);
+
+			listPatientPanel.add(listLabels[i]);
+			listPatientPanel.add(detailPatient[i]);
+			listPatientPanel.add(deletePatient[i]);
+			listPatientPanel.add(adtPatient[i]);
+
+			listPatientPanel.add(split[i]);
+
+		}
+
+		listPatientPanel.validate();
+		listPatientPanel.repaint();
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/*
 	 * checkInfo - Verifies that the contents in the info Panel follow the proper structure
@@ -682,92 +958,115 @@ private String[] sexList = {"","Female", "Male"};
 	 */
 	public boolean checkInfo() {
 		String[] result = new String[8];
-		JTextField parameter[] = new JTextField[4];
-		parameter[0] = firstName;
-		parameter[1] = lastName;
-		parameter[2] = street;
-		parameter[3] = city;
-		boolean number = false;
-		
-		//Length of date
-		String ohipString = ohip.getText();
-		int ohipNumber = 0;
-		
-		try {
-		 ohipNumber =  (int)Integer.parseInt(ohipString);
-		}catch(NumberFormatException f) {
-		
+		String param[] = new String[13];
+		param[0] = firstName.getText();
+		param[1] = lastName.getText();
+		param[2] = city.getText();
+		param[3] = street.getText();
+		param[4] = ohip.getText();
+		param[5] = height.getText();
+		param[6] = weight.getText();
+		param[7] = address.getText();
+		param[8] = postal.getText();
+		param[9] = date.getText();
+		param[10] = sex.getSelectedItem().toString();
+		param[11] = bloodType.getSelectedItem().toString();
+		param[12] = unit.getSelectedItem().toString();
+
+
+
+
+		//Check if fields are empty
+		for(int i= 0; i < 10; i++) {
+			if(param[i].isEmpty()) { return false;}
 		}
-		if(ohipNumber == 0) {number = true;}
-		
-		//System.out.println(dateValue);
-		//Error checking strings
-		if(!number) {
-		for(int i =0; i< 4; i++) {
-			String input = parameter[i].getText();
+
+
+
+
+		//Checking characters from [0] to [2]
+		for(int i =0; i< 3; i++) {
+			String input = param[i];
 			for(int j =0; j< input.length(); j++) {
-				
 				if(!(input.charAt(j) > 64 && input.charAt(j) < 91 || input.charAt(j) > 96 && input.charAt(j) < 123)) {
-					number = true;
-					break;
-					
+					return false;
 				}
 			}
-			
-			
-			if(number) {break;}
-			
+		}
+
+
+		//Checking characters in street
+		String input = param[3];
+		for(int i =0; i< input.length(); i++) {
+			if(!(input.charAt(i) > 64 && input.charAt(i) < 91 || input.charAt(i) > 96 && input.charAt(i) < 123 ||input.charAt(i) == 46 || input.charAt(i) == 32)) {
+				return false;
+			}
+		}
+
+		//Checking ohip length
+		if(param[4].length() != 10 ) {return false;}
+		
+		
+		//Checking for digits 
+		for(int i = 4; i< 8; i++) {
+		input = param[i];
+		for(int j =0; j< input.length(); j++) {
+			if(!(input.charAt(j) > 47 && input.charAt(j) < 58)) {
+				return false;
+			}
 		}
 		}
 		
 		
+		//Checking for postal code
+		input = param[8];
+		if(input.length() != 6) {return false;}
 		
+		for(int i =0; i< input.length(); i++) {
+			
+			if(i == 0 || i==2||i==4) {
+				if(!(input.charAt(i) > 64 && input.charAt(i) < 91 || input.charAt(i) > 96 && input.charAt(i) < 123)) {
+					return false;
+				}
+			}
 		
-		if(!number) {	
-		result[0] = firstName.getText();
-		result[1] = lastName.getText();
-		result[2] = sex.getSelectedItem().toString();
-		result[3] = ohip.getText();
-		result[4] = address.getText();
-		result[5] = street.getText();
-		result[6] = city.getText();
-		result[7] = postal.getText();
-		
-		
-		
-		
-		
+			if(i == 1 || i==3||i==5) {
+			if(!(input.charAt(i) > 47 && input.charAt(i) < 58)) {
+				return false;
+			}
+			}	
 		}
-		else {
-			JOptionPane.showMessageDialog(null, "Invalid Information");
+		
+		
+		input = param[9];
+		if(input.length() != 10) {return false;}
+		
+		for(int i =0; i< input.length(); i++) {
+			
+			if(i == 4 || i==7) {
+				if(input.charAt(i) != 45) {
+					return false;
+				}
+			}else {
+			if(!(input.charAt(i) > 47 && input.charAt(i) < 58)) {
+				return false;
+			}
+			}	
+		}
+		
+		
+		
+		//Check if check boxes are selected;
+		if(sex.getSelectedIndex() == -1 || unit.getSelectedIndex() == -1 || bloodType.getSelectedIndex() == -1) {
 			return false;
 		}
-	return true;	
-	}
 
-	/*
-	 * isComplete - Verifies that all text fields are completed before creating a new record
-	 * @return boolean - Returns the result
-	 */
-	public boolean isComplete() {
-		boolean info = false;
-		boolean status = false;
-		boolean isComplete = false;		
-		info = checkInfo();
-		
-		if(adt.getSelectedIndex() > -1 && unit.getSelectedIndex() > -1 && physician.getSelectedIndex() > -1 && nurse.getSelectedIndex() > -1) {
-			status = true;
-		}
-		
-	
-		if(info && status) {
-			isComplete = true;
-		}
-		
-		return isComplete;
+
+		return true;	
 	}
 
 
-	
+
+
 
 }

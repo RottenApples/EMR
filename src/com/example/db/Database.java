@@ -201,6 +201,94 @@ public class Database {
 			}	
 			
 		}
+		public void createADT(String PatientID, String adt, String unit){
+			/*
+			 * att[10] - adt 
+			 * att[11] -	unit
+			 */
+		
+
+			
+			Date date = new Date();
+			long time = date.getTime();
+			String stamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());		
+			
+			String result = ""; 
+			String result2 = "";
+			
+	
+			CallableStatement stmt, stmt1, stmt2;
+
+				try {
+
+				stmt = conn.prepareCall("CALL GetLocationID(?,?)");
+				stmt.setString(1, unit);
+				stmt.setInt(2, java.sql.Types.INTEGER);
+				
+				
+
+				
+				 ResultSet rs = stmt.executeQuery();
+				  if(rs.next()) {
+				        result=rs.getString(1);
+				        
+				        }
+			
+				if(adt == "Admit") {
+					stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+					stmt2.setString(1, adt);
+					stmt2.setTimestamp(2, java.sql.Timestamp.valueOf(stamp));
+					stmt2.setNull(3, java.sql.Types.TIMESTAMP);
+					stmt2.setNull(4, java.sql.Types.TIMESTAMP);
+					stmt2.setString(5, null);
+					stmt2.setString(6,result);
+					stmt2.setString(7,PatientID);
+					stmt2.execute();
+
+
+			
+
+					}
+					if(adt == "Transfer") {
+						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+
+						stmt2.setString(1, adt);
+						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
+						stmt2.setTimestamp(3, java.sql.Timestamp.valueOf(stamp));
+						stmt2.setNull(4, java.sql.Types.TIMESTAMP);
+						stmt2.setString(5, null);
+						stmt2.setString(6,result);
+						stmt2.setString(7,PatientID);
+						stmt2.execute();
+
+						
+
+					}
+					if(adt == "Discharge") {
+						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+
+						
+						stmt2.setString(1, adt);
+						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
+						stmt2.setNull(3, java.sql.Types.TIMESTAMP);
+						stmt2.setTimestamp(4, java.sql.Timestamp.valueOf(stamp));
+						stmt2.setString(5,null);
+						stmt2.setString(6,result);
+						stmt2.setString(7, PatientID);
+						stmt2.execute();
+
+
+					}
+		
+					rs.close();
+		     
+		       
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			
+		}
 		
 		public void createStaff(String[] att) {
 			/*
@@ -299,7 +387,40 @@ public class Database {
 			
 		}
 		
+		public String getLocationID(String name) {
+			String location = "";
+			  CallableStatement stmt;
+			try {
+				
+				stmt = conn.prepareCall("{CALL GetLocationID(?,?)}");
+				stmt.setString(1, name);
+				stmt.setInt(2, java.sql.Types.INTEGER);
+				
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+				
+			
+				
+		        if(rs.next()) {
+		        	location = rs.getString(1);
+		        	
+		        }
 
+				
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return location;
+		}
 
 		
 		public String[][] getPatient() {
@@ -591,6 +712,9 @@ public class Database {
 		        
 			return row;
 		}
+		
+		
+		
 		
 		public String[][] getADT(int id) {
 			
