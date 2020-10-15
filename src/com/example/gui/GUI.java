@@ -68,8 +68,9 @@ public class GUI implements ActionListener{
 	private JComboBox adt2, unit2;
 	private JButton change;
 	private int patientID;
-
-
+	private JButton mainNew, mainList, mainListPatient, mainListStaff, mainNewPatient, mainNewPrescription, mainNewTest, mainNewStaff;
+	private JButton[] backButton;
+	private JPanel mainPanel, mainPanel2, mainPanel3;
 
 	public GUI(Database db) {
 		this.db = db;
@@ -77,6 +78,7 @@ public class GUI implements ActionListener{
 		infoResult = new String[8]; 
 		statusResult = new String[4]; 
 
+		backButton = new JButton[5];
 
 
 		//Initialize GUI
@@ -143,10 +145,105 @@ public class GUI implements ActionListener{
 
 		frame.add(menuBar);
 
+		/*
+		 *******************************Main Panel*******************************************
+		 */
+		mainPanel = new JPanel();
+		mainNew =  new JButton("Create New");
+		mainList =  new JButton("View List");
+		
+		mainPanel.setVisible(true);
+		mainPanel.setLayout(null);
+		
+		mainNew.setBounds(380,200,400,40);
+		mainList.setBounds(380,300,400,40);
+		mainPanel.setBounds(0,30,1280,690);
 
+		mainNew.addActionListener(this);
+		mainList.addActionListener(this);
+		mainPanel.add(mainNew);
+		mainPanel.add(mainList);
+		frame.add(mainPanel);
+		
+		//***********************************************************************************
+		
+		
+		
+		/*
+		 *******************************Main Panel2*******************************************
+		 */
+		mainPanel2 = new JPanel();
+		mainNewPatient =  new JButton("New Patient");
+		mainNewStaff =  new JButton("New Staff");
+		mainNewPrescription = new JButton("New Prescription");
+		mainNewTest = new JButton("New Test");
+		backButton[0] = new JButton("<");
+		
+		mainPanel2.setVisible(false);
+		mainPanel2.setLayout(null);
+		
+		mainNewPatient.setBounds(380,100,400,40);
+		mainNewStaff.setBounds(380,200,400,40);
+		mainNewPrescription.setBounds(380,300,400,40);
+		mainNewTest.setBounds(380,400,400,40);
+		backButton[0].setBounds(10,10,45,30);
+		
+		mainPanel2.setBounds(0,30,1280,690);
+
+		mainNewPatient.addActionListener(this);
+		mainNewStaff.addActionListener(this);
+		mainNewPrescription.addActionListener(this);
+		mainNewTest.addActionListener(this);
+		backButton[0].addActionListener(this);
+		
+		mainPanel2.add(mainNewPatient);
+		mainPanel2.add(mainNewStaff);
+		mainPanel2.add(mainNewPrescription);
+		mainPanel2.add(mainNewTest);
+		mainPanel2.add(backButton[0]);
+		frame.add(mainPanel2);
+		
+		//***********************************************************************************
+		
+		/*
+		 ****************************Main Panel 3*******************************************
+		 */
+		
+		mainPanel3 = new JPanel();
+		mainPanel3.setLayout(null);
+		mainPanel3.setVisible(false);
+		mainPanel3.setBounds(0,30,1280,690);
+		mainListPatient = new JButton("List Patients");
+		mainListStaff = new JButton("List Staff");
+		backButton[1] = new JButton("<");
+
+
+		backButton[1].setBounds(10,10,45,30);
+		mainListPatient.setBounds(380,200,400,40);
+		mainListStaff.setBounds(380,300,400,40);
+		mainListPatient.addActionListener(this);
+		mainListStaff.addActionListener(this);
+		backButton[1].addActionListener(this);
+		mainPanel3.add(backButton[1]);
+		mainPanel3.add(mainListPatient);
+		mainPanel3.add(mainListStaff);
+		frame.add(mainPanel3);
+		
+		
+		//*********************************************************************************
+		
+		
+		
+		
+		
+		
+		
 		/*
 		 *****************************Info Panel*********************************************		
 		 */
+		backButton[2] = new JButton("<");
+		backButton[2].setBounds(10,10,45,30);
+		backButton[2].addActionListener(this);
 		firstName = new JTextField();
 		lastName = new JTextField();
 		ohip = new JTextField();
@@ -216,7 +313,7 @@ public class GUI implements ActionListener{
 
 		//Adding components	
 		//	infoPanel.add(infoDisplay);
-
+		infoPanel.add(backButton[2]);
 		infoPanel.add(sexLabel);
 		infoPanel.add(sex);
 		infoPanel.add(ohipLabel);
@@ -242,7 +339,7 @@ public class GUI implements ActionListener{
 		infoPanel.add(reasonLabel);
 		infoPanel.add(unit);
 		infoPanel.add(unitLabel);
-
+		
 		infoPanel.setVisible(false);
 
 
@@ -263,21 +360,21 @@ public class GUI implements ActionListener{
 		/*
 		 **********************Staff Panel********************************
 		 */
+		backButton[3] = new JButton("<");
+		backButton[3].setBounds(10,10,45,30);
+		backButton[3].addActionListener(this);
 		createStaff = new JButton("Create Staff");
-		staffTitle = new JLabel("New Staff Member");
 		createStaff.setBounds(30,200,120,30);
-		staffTitle.setBounds(30, 20, 150, 20);
 		staffPanel.setBounds(0,30,1200,650);
 		staff = new JComboBox(staffList);
 		staff.setSelectedIndex(-1);
 		staffLabel = new JLabel("Staff");
-		staffLabel.setBounds(30, 100, 80, 20);
-		staff.setBounds(30, 120, 80, 20);
-		staffPanel.add(staffTitle);
+		staffLabel.setBounds(30, 120, 80, 20);
+		staff.setBounds(30, 140, 80, 20);
 		staffPanel.add(staffLabel);
 		staffPanel.add(staff);
 		staffPanel.add(createStaff);
-
+		staffPanel.add(backButton[3]);
 
 		// ******************************************************************
 
@@ -289,6 +386,9 @@ public class GUI implements ActionListener{
 		 **********************Prescription Panel****************************		
 		 */
 
+		backButton[4] = new JButton("<");
+		backButton[4].setBounds(10,10,45,30);
+		backButton[4].addActionListener(this);
 		createPrescription = new JButton("Create Prescription");
 		preName = new JTextField();
 
@@ -363,6 +463,7 @@ public class GUI implements ActionListener{
 		prescriptionPanel.add(patient);
 		prescriptionPanel.add(physicianNameLabel);
 		prescriptionPanel.add(staffName);
+		prescriptionPanel.add(backButton[4]);
 		//*************************************************************************
 
 
@@ -389,6 +490,7 @@ public class GUI implements ActionListener{
 		/*
 		 ****************************Detail Patient Panel************************************ 		
 		 */
+		
 		detailPanel = new JPanel();
 		detailPanel.setLayout(null);
 		detailPanel.setVisible(true);
@@ -508,8 +610,8 @@ public class GUI implements ActionListener{
 		createPatient.addActionListener(this);
 		createStaff.addActionListener(this);
 		createPrescription.addActionListener(this);
-
-
+		
+		
 		unit.addActionListener(this);
 
 	}
@@ -520,6 +622,71 @@ public class GUI implements ActionListener{
 
 
 	public void actionPerformed(ActionEvent e) {
+		
+		if(e.getSource() == mainNew) {
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(true);
+			mainPanel3.setVisible(false);
+			infoPanel.setVisible(false);
+			staffPanel.setVisible(false);
+			prescriptionPanel.setVisible(false);
+			testPanel.setVisible(false);
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
+			
+		}
+		if(e.getSource() == mainNewPatient) {
+			menuNewPatient.doClick();
+		}
+		if(e.getSource() == mainNewPrescription) {
+			menuNewPrescription.doClick();
+		}
+		if(e.getSource() == mainNewStaff) {
+			menuNewStaff.doClick();
+		}
+		if(e.getSource() == mainNewTest) {
+			menuNewTest.doClick();
+		}
+		if(e.getSource() == mainListPatient) {
+			menuListPatient.doClick();
+		}
+		if(e.getSource() == mainListStaff) {
+			menuListStaff.doClick();
+		}
+		
+		
+		
+		
+		for(int i = 0; i< 5; i++) {
+		if(e.getSource() == backButton[i]) {
+			mainPanel.setVisible(true);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
+			infoPanel.setVisible(false);
+			staffPanel.setVisible(false);
+			prescriptionPanel.setVisible(false);
+			testPanel.setVisible(false);
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
+			
+		}
+		}
+		if(e.getSource() == mainList) {
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(true);
+			infoPanel.setVisible(false);
+			staffPanel.setVisible(false);
+			prescriptionPanel.setVisible(false);
+			testPanel.setVisible(false);
+			scrollStaff.setVisible(false);
+			scrollPatient.setVisible(false);
+			detailTab.setVisible(false);
+			
+		}
+		
 		if(e.getSource() == createPatient) {
 			//height fix
 
@@ -539,7 +706,7 @@ public class GUI implements ActionListener{
 			result[12] = reason.getText();
 			
 			if(checkInfo()){
-				//db.createPatient(result);
+				db.createPatient(result);
 			}else {
 				JOptionPane.showMessageDialog(null, "Invalid Format.");
 			}
@@ -585,6 +752,9 @@ public class GUI implements ActionListener{
 		}
 
 		if(e.getSource() == menuNewPatient) {
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
 			infoPanel.setVisible(true);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
@@ -606,6 +776,9 @@ public class GUI implements ActionListener{
 		}
 
 		if(e.getSource() == menuNewStaff) {
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(true);
 			prescriptionPanel.setVisible(false);
@@ -629,6 +802,9 @@ public class GUI implements ActionListener{
 		}
 
 		if(e.getSource() == menuNewPrescription) {
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(true);
@@ -638,7 +814,9 @@ public class GUI implements ActionListener{
 			detailTab.setVisible(false);
 		}
 		if(e.getSource() == menuNewTest) {
-
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
@@ -657,7 +835,9 @@ public class GUI implements ActionListener{
 
 
 		if(e.getSource() == menuListPatient) {
-
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
 			detailTab.setVisible(false);
 			staffPanel.setVisible(false);
@@ -671,6 +851,9 @@ public class GUI implements ActionListener{
 
 
 		if(e.getSource() == menuListStaff) {
+			mainPanel.setVisible(false);
+			mainPanel2.setVisible(false);
+			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
 			detailTab.setVisible(false);
 			staffPanel.setVisible(false);
@@ -708,6 +891,9 @@ public class GUI implements ActionListener{
 				detailPanel.removeAll();
 				prescriptionPanel.removeAll();
 				detailPanel3.removeAll();
+				mainPanel.setVisible(false);
+				mainPanel2.setVisible(false);
+				mainPanel3.setVisible(false);
 				infoPanel.setVisible(false);
 				detailTab.setVisible(true);			
 				staffPanel.setVisible(false);
@@ -838,28 +1024,6 @@ public class GUI implements ActionListener{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		for(int i =0; i< rowStaff; i++) {
 			if(e.getSource() == deleteStaff[i]) {
 
@@ -939,16 +1103,6 @@ public class GUI implements ActionListener{
 		listPatientPanel.repaint();
 
 	}
-
-
-
-
-
-
-
-
-
-
 
 
 
