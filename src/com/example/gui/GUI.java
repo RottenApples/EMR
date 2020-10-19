@@ -58,11 +58,10 @@ public class GUI implements ActionListener{
 	private int rowStaff =0;
 	private int rowPrescription =0;
 	private JPanel detailPanel, detailPanel2, detailPanel3;
-	private JTabbedPane detailTab;
 	private String[][] ADT;
 	private JSeparator split2;
 	private JLabel[] detailLabel;
-	private JScrollPane scrollPatient, scrollStaff;
+	private JScrollPane scrollPatient, scrollStaff, scrollADT, scrollPrescription;
 	private String[] sexList = {"","Female", "Male"};
 	private JLabel physicianNameLabel, patientNameLabel;
 	private JComboBox adt2, unit2;
@@ -71,14 +70,17 @@ public class GUI implements ActionListener{
 	private JButton mainNew, mainList, mainListPatient, mainListStaff, mainNewPatient, mainNewPrescription, mainNewTest, mainNewStaff;
 	private JButton[] backButton;
 	private JPanel mainPanel, mainPanel2, mainPanel3;
-
+	private JLabel ADTlabel, Prescriptionlabel;
+	
+	
+	
 	public GUI(Database db) {
 		this.db = db;
 
 		infoResult = new String[8]; 
 		statusResult = new String[4]; 
 
-		backButton = new JButton[5];
+		backButton = new JButton[7];
 
 
 		//Initialize GUI
@@ -477,7 +479,7 @@ public class GUI implements ActionListener{
 		listPatientPanel.setLayout(null);
 		listPatientPanel.setVisible(true);
 		listLabel = new JLabel();
-		listPatientPanel.setPreferredSize(new Dimension(1000,1200));
+		listPatientPanel.setPreferredSize(new Dimension(1000,18000));
 		scrollPatient = new JScrollPane(listPatientPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPatient.setBounds(0,30,1184,655);
 		scrollPatient.setVisible(false);
@@ -491,16 +493,39 @@ public class GUI implements ActionListener{
 		 ****************************Detail Patient Panel************************************ 		
 		 */
 		
+		backButton[6] = new JButton("<");
+		backButton[6].setBounds(10,580,45,30);
+		backButton[6].addActionListener(this);
 		detailPanel = new JPanel();
 		detailPanel.setLayout(null);
-		detailPanel.setVisible(true);
+		detailPanel.setVisible(false);
+		detailPanel.setBounds(0,30,1280,690);
 		detailPanel2 = new JPanel();
 		detailPanel2.setLayout(null);
 		detailPanel2.setVisible(true);
+		detailPanel2.setPreferredSize(new Dimension(650,1200));
 		detailPanel3 = new JPanel();
 		detailPanel3.setLayout(null);
 		detailPanel3.setVisible(true);
+		detailPanel3.setPreferredSize(new Dimension(650,1200));
+		ADTlabel = new JLabel("ADT History");
+		ADTlabel.setBounds(500,0,160,30);
+		Prescriptionlabel = new JLabel("Prescription History");
+		Prescriptionlabel.setBounds(500,300,160,30);
 
+		
+		
+		scrollADT = new JScrollPane(detailPanel3,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollADT.setBounds(500,30,650,250);
+		scrollADT.setVisible(true);
+
+		scrollPrescription = new JScrollPane(detailPanel2,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPrescription.setBounds(500,340,650,250);
+		scrollPrescription.setVisible(true);
+		
+		
+		
+		
 		String resultDem[][] = null;
 
 		resultDem = db.getDemographics();
@@ -514,15 +539,9 @@ public class GUI implements ActionListener{
 
 
 
-
-
-
-		detailTab = new JTabbedPane();	
-		detailTab.addTab("Info", detailPanel);
-		detailTab.addTab("Prescription History", detailPanel2);
-		detailTab.addTab("ADT History", detailPanel3);
-		detailTab.setBounds(0,30,1280,690);
-		detailTab.setVisible(false);
+		
+		
+		
 
 		//*************************************************************************		
 
@@ -580,7 +599,7 @@ public class GUI implements ActionListener{
 		prescriptionPanel.setBounds(0,30,1280,690);
 		testPanel.setBounds(0,30,1280,690);
 
-		frame.add(detailTab);
+		frame.add(detailPanel);
 		frame.add(staffPanel);
 		frame.add(infoPanel);
 		frame.add(prescriptionPanel);
@@ -633,7 +652,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(false);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 			
 		}
 		if(e.getSource() == mainNewPatient) {
@@ -658,7 +677,7 @@ public class GUI implements ActionListener{
 		
 		
 		
-		for(int i = 0; i< 5; i++) {
+		for(int i = 0; i< 7; i++) {
 		if(e.getSource() == backButton[i]) {
 			mainPanel.setVisible(true);
 			mainPanel2.setVisible(false);
@@ -669,7 +688,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(false);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 			
 		}
 		}
@@ -683,7 +702,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(false);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 			
 		}
 		
@@ -705,7 +724,7 @@ public class GUI implements ActionListener{
 			result[11] = unit.getSelectedItem().toString();
 			result[12] = reason.getText();
 			
-			if(checkInfo()){
+			if(checkPatientInfo()){
 				db.createPatient(result);
 			}else {
 				JOptionPane.showMessageDialog(null, "Invalid Format.");
@@ -718,16 +737,29 @@ public class GUI implements ActionListener{
 
 		if(e.getSource() == createStaff) {
 			String result[] = new String[3];
+			try {
 			result[0] = firstName.getText();
 			result[1] = lastName.getText();
+		
 			result[2] = staff.getSelectedItem().toString();
 
+			if(checkStaffInfo()) {
+				db.createStaff(result);
+			}else {
+				JOptionPane.showMessageDialog(null, "Invalid Format.");
 
-			db.createStaff(result);
+			}
+			}catch(NullPointerException f){
+				JOptionPane.showMessageDialog(null, "Invalid Format.");
+
+				
+			}
+			
 		}
 
 		if(e.getSource() == createPrescription) {
 			String tempPatientName, tempStaffName;
+			try {
 			tempPatientName = patient.getSelectedItem().toString();
 			tempStaffName = staffName.getSelectedItem().toString();
 
@@ -746,8 +778,20 @@ public class GUI implements ActionListener{
 			result[4] =	temp[0];
 			result[5] =	temp2[0];
 
-			System.out.println(result[0]+" "+result[1]+" "+result[2]+" "+result[3]+" "+result[4]+" "+result[5]);
-			db.createPrescription(result);
+			if(checkPrescriptionInfo()) {
+				
+				db.createPrescription(result);
+				
+				
+			}else {
+				
+				JOptionPane.showMessageDialog(null, "Invalid Format.");
+
+			}
+			}catch(NullPointerException f){
+				JOptionPane.showMessageDialog(null, "Invalid Format.");
+ 
+			}
 
 		}
 
@@ -761,7 +805,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(false);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 
 			infoPanel.add(firstLabel);
 			infoPanel.add(firstName);
@@ -785,7 +829,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(false);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 
 			infoPanel.remove(firstLabel);
 			infoPanel.remove(firstName);
@@ -811,7 +855,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(false);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 		}
 		if(e.getSource() == menuNewTest) {
 			mainPanel.setVisible(false);
@@ -823,7 +867,7 @@ public class GUI implements ActionListener{
 			testPanel.setVisible(true);
 			scrollStaff.setVisible(false);
 			scrollPatient.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 
 		}
 
@@ -839,7 +883,7 @@ public class GUI implements ActionListener{
 			mainPanel2.setVisible(false);
 			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
@@ -855,7 +899,7 @@ public class GUI implements ActionListener{
 			mainPanel2.setVisible(false);
 			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
-			detailTab.setVisible(false);
+			detailPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
@@ -895,7 +939,7 @@ public class GUI implements ActionListener{
 				mainPanel2.setVisible(false);
 				mainPanel3.setVisible(false);
 				infoPanel.setVisible(false);
-				detailTab.setVisible(true);			
+				detailPanel.setVisible(true);			
 				staffPanel.setVisible(false);
 				prescriptionPanel.setVisible(false);
 				testPanel.setVisible(false);
@@ -925,12 +969,20 @@ public class GUI implements ActionListener{
 						label2[j] = new JLabel("<html>"+"  ADT: "+ADT[j][1] +" <br/>Discharge Date: "+ADT[j][4]+" <br/> Reason: "+ADT[j][5]+ "</html>"); 
 					}
 					JSeparator split3 = new JSeparator();
-					split3.setBounds(0,(140+15*j)*(j+1),1200,20);
+					if(j==0) {
+
+						 
+						label2[j].setBounds(30,0,300,120);
+							
+					}else {
+					
+					split3.setBounds(0,(70+15*j)*(j+1),1200,20);
 					split3.setOrientation(SwingConstants.HORIZONTAL); 
-					label2[j].setBounds(30,(140+15*j)*(j+1),300,120);
+					label2[j].setBounds(30,(70+15*j)*(j+1),300,120);
+					}
 					detailPanel3.add(label2[j]);
 					detailPanel3.add(split3);
-
+					
 				}
 
 
@@ -955,10 +1007,13 @@ public class GUI implements ActionListener{
 
 				}
 
-
-
+				detailPanel.add(ADTlabel);
+				detailPanel.add(scrollADT);
+				detailPanel.add(Prescriptionlabel);
+				detailPanel.add(scrollPrescription);
+				detailPanel.add(backButton[6]);
+				
 				detailPanel.add(detailLabel[i]);
-
 
 			}
 		}
@@ -1051,6 +1106,7 @@ public class GUI implements ActionListener{
 		resultPatient = db.getPatient();
 		resultDemographics = db.getDemographics();
 		rowPatient = db.getPatientCount();
+
 		JSeparator[] split = new JSeparator[rowPatient];
 
 		listLabels = new JLabel[rowPatient];
@@ -1058,7 +1114,7 @@ public class GUI implements ActionListener{
 		detailPatient = new JButton[rowPatient];
 		adtPatient = new JButton[rowPatient];
 
-
+		
 
 		for(int i =0; i<rowPatient; i++) {
 			split[i] = new JSeparator();
@@ -1073,16 +1129,24 @@ public class GUI implements ActionListener{
 					+resultDemographics[i][0] +" <br/>Date of Birth: "+resultDemographics[i][1] +" <br/>Sex: "+resultDemographics[i][2] +" <br/>Height: "+resultDemographics[i][3] +" <br/>Weight: "+resultDemographics[i][4] +" <br/>Blood Type: "+resultDemographics[i][5] 
 							+" <br/>Address: " +resultDemographics[i][6]+"</html>");
 
-			if(i>0) {
-				listLabels[i].setBounds(30,(90+15*i)*(i+1),1200,150);
-				deletePatient[i].setBounds(1000,(140+15*i)*(i+1),80,20);
-				detailPatient[i].setBounds(300,(140+15*i)*(i+1),80,20);
-				adtPatient[i].setBounds(400,(140+15*i)*(i+1),80,20);
+			if(i == 1) {
+				listLabels[i].setBounds(30,180,1200,150);
+				deletePatient[i].setBounds(1000,320,80,20);
+				detailPatient[i].setBounds(400,320,80,20);
+				adtPatient[i].setBounds(500,320,80,20);
 
-			}else {listLabels[i].setBounds(30,10*(i+1),1200,150);
+				
+			}else if(i > 0){
+
+				listLabels[i].setBounds(30,180*i,380,150);
+				deletePatient[i].setBounds(1000,(180*i)+140,80,20);
+				detailPatient[i].setBounds(400,(180*i)+140,80,20);
+				adtPatient[i].setBounds(500,(180*i)+140,80,20);
+				
+			}else {listLabels[i].setBounds(30,10,1200,150);
 			deletePatient[i].setBounds(1000,140,80,20);
-			detailPatient[i].setBounds(300,140,80,20);
-			adtPatient[i].setBounds(400,140,80,20);
+			detailPatient[i].setBounds(400,140,80,20);
+			adtPatient[i].setBounds(500,140,80,20);
 
 			}
 			deletePatient[i].addActionListener(this);
@@ -1110,7 +1174,7 @@ public class GUI implements ActionListener{
 	 * checkInfo - Verifies that the contents in the info Panel follow the proper structure
 	 * @return boolean - Variable to output result
 	 */
-	public boolean checkInfo() {
+	public boolean checkPatientInfo() {
 		String[] result = new String[8];
 		String param[] = new String[13];
 		param[0] = firstName.getText();
@@ -1220,6 +1284,66 @@ public class GUI implements ActionListener{
 	}
 
 
+	public boolean checkStaffInfo() {
+		String param[] = new String[2];
+		
+		 param[0] = firstName.getText();
+		 param[1] = lastName.getText();
+		//Checking characters from [0] to [2]
+		for(int i =0; i< 2; i++) {
+			String input = param[i];
+			for(int j =0; j< input.length(); j++) {
+				if(!(input.charAt(j) > 64 && input.charAt(j) < 91 || input.charAt(j) > 96 && input.charAt(j) < 123)) {
+					return false;
+				}
+			}
+		}
+
+		if(staff.getSelectedIndex() == -1) {return false;}
+		return true;	
+	}
+	
+	
+	public boolean checkPrescriptionInfo() {
+		
+		 if(patient.getSelectedIndex() == -1 || staffName.getSelectedIndex() == -1) {
+			 return false;
+		 }
+
+
+
+
+
+		String result[] =  new String[4];
+		result[0] = preName.getText(); 
+		result[1] = preDosage.getText(); 
+		result[2] = preRefill.getText(); 
+		result[3] = preDirect.getText();
+		 
+		if(result[0].isEmpty() || result[1].isEmpty() || result[2].isEmpty() || result[3].isEmpty()) {
+			
+			return false;
+		}
+		
+			String input = result[0];
+			for(int j =0; j< input.length(); j++) {
+				if(!(input.charAt(j) > 64 && input.charAt(j) < 91 || input.charAt(j) > 96 && input.charAt(j) < 123)) {
+					return false;
+				}
+			
+		}
+			for(int i = 1; i< 3; i++) {
+				input = result[i];
+				for(int j =0; j< input.length(); j++) {
+					if(!(input.charAt(j) > 47 && input.charAt(j) < 58)) {
+						return false;
+					}
+				}
+				}
+		
+		
+		return true;
+	}
 
 
 

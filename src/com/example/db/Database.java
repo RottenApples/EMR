@@ -575,7 +575,7 @@ public class Database {
 				
 				
 				stmt.setInt(1, java.sql.Types.INTEGER);
-				stmt.setInt(2, java.sql.Types.INTEGER);
+				stmt.setString(2, "@ohip");
 				stmt.setDate(3, java.sql.Date.valueOf("1998-12-12"));
 				stmt.setString(4, "@sex");
 				stmt.setInt(5, java.sql.Types.INTEGER);
