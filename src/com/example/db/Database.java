@@ -36,10 +36,154 @@ public class Database {
 		    }
 		  
 		}
-		
+		public void App(String att[]) {
+			
 
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL Appointment(?,?,?,?)}");
+				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(att[0]));
+				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(att[1]));
+				stmt.setInt(3, Integer.valueOf(att[3]));
+				stmt.setInt(4, Integer.valueOf(att[4]));
+
+				ResultSet rs = stmt.executeQuery();
+		      
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+			
+		}
 		
+		
+		
+		
+		
+		
+		public String[][] getApp(String start, String end) {
+			String result = AppCount(start, end);
+			int row = Integer.parseInt(result);
+			String[][] patient = null; 
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL GetApp(?,?)}");
+				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(start));
+				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(end));
 	
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+				patient = new String[row][5];
+				for(int i=0; i < row; i++) {
+		        if(rs.next()) {
+		        	patient[i][0] = rs.getString(1);
+		        	patient[i][1] =rs.getString(2);
+		        	patient[i][2] =rs.getString(3);
+		          	patient[i][3] = rs.getString(4);
+		        	patient[i][4] =rs.getString(5);
+		        
+		        	
+		        }
+
+				}
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return patient;
+		}
+	
+		
+		public String AppCount(String start, String end) {
+			String count = "";
+			  CallableStatement stmt;
+			try {
+			
+				stmt = conn.prepareCall("{CALL AppCount(?,?)}");
+				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(start));
+				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(end));
+
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+				
+				for(int i=0; i < 1; i++) {
+		        if(rs.next()) {
+		        	count = rs.getString(1);
+		 
+		        
+		        	
+		        }
+
+				}
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+			return count;
+		}
+		
+		public String[] getName(int id){
+			
+			String[][] patient = new String[1][2];
+			  CallableStatement stmt;
+			try {
+ 				stmt = conn.prepareCall("{CALL GetPatientName(?)}");
+				stmt.setInt(1, id);
+
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+	
+				
+		        if(rs.next()) {
+		        	patient[0][0] = rs.getString(1);
+		        	patient[0][1] =rs.getString(2);
+		        	
+		        }
+
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			
+			String[] patient2 = new String[2];
+			patient2[0]= patient[0][0];
+			patient2[1]= patient[0][1];
+			return patient2;
+			
+			
+		}
 		
 		public void createPatient(String[] att) {
 			/*
@@ -58,8 +202,8 @@ public class Database {
 			stmt.setString(2, att[2]);
 			stmt.execute();	
 
-			stmt2 =	conn.prepareCall("{call LastIndex(?)}");
-			stmt2.setInt(1, java.sql.Types.INTEGER);
+			stmt2 =	conn.prepareCall("{call LastIndex()}");
+			
 			ResultSet rs = stmt2.executeQuery();
 			
 
@@ -392,9 +536,8 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetLocationID(?,?)}");
+				stmt = conn.prepareCall("{CALL GetLocationID(?)}");
 				stmt.setString(1, name);
-				stmt.setInt(2, java.sql.Types.INTEGER);
 				
 				ResultSet rs = stmt.executeQuery();
 		        
@@ -421,6 +564,76 @@ public class Database {
 			
 			return location;
 		}
+		
+		public String getLocationName(int id) {
+			
+			String name = "";
+			String location = "";
+			  CallableStatement stmt;
+			try {
+				
+				stmt = conn.prepareCall("{CALL GetLocationName(?,?)}");
+				stmt.setInt(1, id);
+				stmt.setString(2, name);
+				
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+				
+			
+				
+		        if(rs.next()) {
+		        	location = rs.getString(1);
+		        	
+		        }
+
+				
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return location;
+		
+		}
+		
+		public String getLatestLocation(int id) {
+			String location = "";
+			  CallableStatement stmt;
+			try {
+				
+				stmt = conn.prepareCall("{CALL GetLatestLocation(?)}");
+				stmt.setInt(1, id);
+				
+				ResultSet rs = stmt.executeQuery();
+		        
+		        if(rs.next()) {
+		        	location = rs.getString(1);
+		        	
+		        }
+
+		  
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return location;
+			
+			
+		}
+		
+		
+		
 
 		
 		public String[][] getPatient() {
@@ -429,10 +642,8 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetPatient(?,?,?)}");
-				stmt.setInt(1, java.sql.Types.INTEGER);
-				stmt.setString(2, "@FirstName");
-				stmt.setString(3, "@LastName");
+ 				stmt = conn.prepareCall("{CALL GetPatient()}");
+
 				
 				ResultSet rs = stmt.executeQuery();
 		        
@@ -466,6 +677,46 @@ public class Database {
 		}
 
 		
+		public String[][] getPatient(int Location) {
+			int row = getPatientCount();
+			String[][] patient = null; 
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL GetPatient()}");
+		
+				
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+				
+				patient = new String[row][3];
+				for(int i=0; i < row; i++) {
+		        if(rs.next()) {
+		        	patient[i][0] = rs.getString(1);
+		        	patient[i][1] =rs.getString(2);
+		        	patient[i][2] =rs.getString(3);
+		        	
+		        }
+
+				}
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			
+			
+			return patient;
+		}
+
 		
 	
 		
@@ -477,12 +728,8 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetStaff(?,?,?)}");
-				stmt.setInt(1, java.sql.Types.INTEGER);
-				stmt.setString(2, "@FirstName");
-				stmt.setString(3, "@LastName");
-				
-				
+				stmt = conn.prepareCall("{CALL GetStaff()}");
+								
 				ResultSet rs = stmt.executeQuery();
 		        
 						
@@ -521,15 +768,9 @@ public class Database {
 			 CallableStatement stmt;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetPrescription(?,?,?,?,?,?,?)}");
+				stmt = conn.prepareCall("{CALL GetPrescription(?)}");
 			
 				stmt.setInt(1, id);
-				stmt.setInt(2, java.sql.Types.INTEGER);
-				stmt.setString(3, "@PrescriptionName");
-				stmt.setDate(4, java.sql.Date.valueOf("2017-06-15"));
-				stmt.setInt(5, java.sql.Types.INTEGER);
-				stmt.setInt(6, java.sql.Types.INTEGER);
-				stmt.setString(7, "@Direction");
 				
 				ResultSet rs = stmt.executeQuery();
 		        
@@ -571,17 +812,7 @@ public class Database {
 			String[][] patient = null; 
 			  CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("{CALL GetDemographics(?,?,?,?,?,?,?,?)}");
-				
-				
-				stmt.setInt(1, java.sql.Types.INTEGER);
-				stmt.setString(2, "@ohip");
-				stmt.setDate(3, java.sql.Date.valueOf("1998-12-12"));
-				stmt.setString(4, "@sex");
-				stmt.setInt(5, java.sql.Types.INTEGER);
-				stmt.setInt(6, java.sql.Types.INTEGER);
-				stmt.setLong(7,'a');
-				stmt.setString(8, "@contact");
+				stmt = conn.prepareCall("{CALL GetDemographics()}");
 				
 				
 				ResultSet rs = stmt.executeQuery();
@@ -628,10 +859,7 @@ public class Database {
 			
 			  CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("CALL PatientCount(?)");
-			
-				stmt.setInt(1, java.sql.Types.INTEGER);
-				
+				stmt = conn.prepareCall("CALL PatientCount()");
 				
 				ResultSet rs = stmt.executeQuery();
 				
@@ -658,9 +886,8 @@ public class Database {
 			
 		   CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("CALL StaffCount(?)");
+				stmt = conn.prepareCall("CALL StaffCount()");
 			
-				stmt.setInt(1, java.sql.Types.INTEGER);
 				
 				
 				ResultSet rs = stmt.executeQuery();
@@ -689,9 +916,8 @@ public class Database {
 			
 			  CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("CALL PrescriptionCount(?,?)");
+				stmt = conn.prepareCall("CALL PrescriptionCount(?)");
 				stmt.setInt(1, id);
-				stmt.setInt(2, java.sql.Types.INTEGER);
 								
 				ResultSet rs = stmt.executeQuery();
 				
@@ -723,24 +949,18 @@ public class Database {
 			  CallableStatement stmt;
 			try {
 				
-				stmt = conn.prepareCall("CALL GetADT(?,?,?,?,?,?,?)");
+				stmt = conn.prepareCall("CALL GetADT(?)");
 			
 
 				stmt.setInt(1, id);
-				stmt.setInt(2, java.sql.Types.INTEGER);
-				stmt.setString(3, "@adt");
-				stmt.setTimestamp(4, java.sql.Timestamp.valueOf("2002-01-19 00:00:00"));
-				stmt.setTimestamp(5, java.sql.Timestamp.valueOf("2002-01-19 00:00:00"));
-				stmt.setTimestamp(6, java.sql.Timestamp.valueOf("2002-01-19 00:00:00"));
-				stmt.setString(7, "@reason");
-				
+			
 				stmt.execute();
 				
 				
 				ResultSet rs = stmt.executeQuery();
 		        
 				
-				adt = new String[row][6];
+				adt = new String[row][7];
 				for(int i=0; i < row; i++) {
 		        if(rs.next()) {
 		        	adt[i][0] = rs.getString(1);
@@ -749,6 +969,8 @@ public class Database {
 		        	adt[i][3] = rs.getString(4);
 		        	adt[i][4] =rs.getString(5);
 		        	adt[i][5] =rs.getString(6);
+		        	adt[i][6] =rs.getString(7);
+
 		        	
 		        }
 
@@ -773,9 +995,9 @@ public class Database {
 			
 			 CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("CALL ADTCount(?,?)");
+				stmt = conn.prepareCall("CALL ADTCount(?)");
 				stmt.setInt(1, id);
-				stmt.setInt(2, java.sql.Types.INTEGER);
+
 				
 				ResultSet rs = stmt.executeQuery();
 				
@@ -818,11 +1040,7 @@ public class Database {
 				e.printStackTrace();
 			}
 			
-			
-			
-			
-			
-	
-}
+
+		}
 	
 }
