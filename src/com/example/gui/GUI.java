@@ -18,13 +18,15 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import com.example.calendar.Calendar;
 import com.example.db.Database;
 
 public class GUI implements ActionListener{
 	private Database db;	
 
 	private JFrame frame;
-	private JPanel infoPanel, testPanel, historyDisplay, infoDisplay, statusDisplay, staffPanel, prescriptionPanel, listPatientPanel;
+	private JPanel infoPanel, testPanel, historyDisplay, infoDisplay, statusDisplay, staffPanel, prescriptionPanel;
+	private JPanel[] listPatientPanel, listStaffPanel;
 	private String searchName;
 	private JTextField firstName, lastName, ohip, address, street, city, postal, date, height, weight, prescription, allergy, surgical, obsteric, family, immunization,
 	preName, preDosage, physicianFirst, physicianLast, preRefill, preDirect, searchBar;
@@ -39,19 +41,19 @@ public class GUI implements ActionListener{
 	private JTabbedPane tab; 
 	private JComboBox sex, adt, physician, nurse, unit, staff, patient, staffName, bloodType;
 	private LineBorder border;
-	private	String[] adtList = {"Admit", "Transfer", "Discharge"};
+	private	String[] adtList = {"Transfer", "Discharge"};
 	private	String[] unitList = {"CCU","ER", "ICU", "MICU", "NICU", "Oncology", "Open-Heart Recovery", "OR", "PACU", "Hospice", "PICU", "Pre-Op", "Rehabilitation", "SICU", 
 			"Step-Down Unit", "The Floor", "TICU"};
 	private String[] staffList = {"Nurse", "Physician"};
 	private String[] bloodTypes = {"O+", "O-", "A+", "A-", "B+", "AB+", "AB-"};
 	private String[] infoResult, statusResult;
-	private JPanel list, listStaffPanel;
+	private JPanel list;
 	private JTextArea reason;
 	private JLabel bloodLabel, reasonLabel, listLabel;
 	private JTextField bloodTypeField;
 	private JLabel[] listLabels, listStaffLabel, listPrescriptionLabel;
-	private JButton[] deletePatient, deleteStaff, deletePrescription, detailPatient, adtPatient;
-	private String resultPatient[][] = null; 
+	private JButton[] deletePrescription;
+	private JButton[][] detailPatient, adtPatient, deletePatient, deleteStaff;
 	private String resultStaff[][] = null;
 	private String resultPrescription[][] = null;
 	private int rowPatient = 0;
@@ -60,20 +62,24 @@ public class GUI implements ActionListener{
 	private JPanel detailPanel, detailPanel2, detailPanel3;
 	private String[][] ADT;
 	private JSeparator split2;
-	private JLabel[] detailLabel;
-	private JScrollPane scrollPatient, scrollStaff, scrollADT, scrollPrescription;
+	private JScrollPane scrollPatient, scrollPatient2, scrollPatient3, scrollPatient4, scrollPatient5, scrollPatient6,  scrollPatient7,  scrollPatient8, scrollPatient9, 
+	scrollPatient10,scrollPatient11,scrollPatient12,scrollPatient13,scrollPatient14,scrollPatient15,scrollPatient16,scrollPatient17,scrollADT, scrollPrescription;
+	private JScrollPane scrollStaff, scrollStaff2;
 	private String[] sexList = {"","Female", "Male"};
 	private JLabel physicianNameLabel, patientNameLabel;
-	private JComboBox adt2, unit2;
-	private JButton change;
+	private JComboBox<String> adt2, unit2;
+	private JButton[][] change;
 	private int patientID;
-	private JButton mainNew, mainList, mainListPatient, mainListStaff, mainNewPatient, mainNewPrescription, mainNewTest, mainNewStaff;
 	private JButton[] backButton;
 	private JPanel mainPanel, mainPanel2, mainPanel3;
 	private JLabel ADTlabel, Prescriptionlabel;
-	
-	
-	
+	private JTabbedPane patientLocation, staffCategory;
+	private String[][] Location;
+	private String locationPatient[][];
+	private String[] patients;
+	private String resultDemographics[];
+	private JLabel[][] detailLabel;
+	private JDialog pane;
 	public GUI(Database db) {
 		this.db = db;
 
@@ -97,7 +103,6 @@ public class GUI implements ActionListener{
 
 
 
-
 		menuBar = new JMenuBar();
 		menuFile = new JMenu("File");
 		menuView = new JMenu("View");
@@ -105,8 +110,7 @@ public class GUI implements ActionListener{
 		menuNewStaff = new JMenuItem("New Medical Staff");
 		menuNewPrescription = new JMenuItem("New Prescription");
 		menuNewTest = new JMenuItem("New Lab Test");
-		menuOpen = new JMenuItem("Open");
-		menuSave = new JMenuItem("Save");
+
 		menuExit = new JMenuItem("Exit");
 		menuListPatient = new JMenuItem("List Patients...");
 		menuListStaff = new JMenuItem("List Medical Staff...");
@@ -139,105 +143,24 @@ public class GUI implements ActionListener{
 		menuFile.add(menuNewStaff);
 		menuFile.add(menuNewPrescription);
 		menuFile.add(menuNewTest);
-		menuFile.add(menuOpen);
-		menuFile.add(menuSave);
 		menuFile.add(menuExit);
 		menuView.add(menuListPatient);
 		menuView.add(menuListStaff);
 
 		frame.add(menuBar);
 
-		/*
-		 *******************************Main Panel*******************************************
-		 */
-		mainPanel = new JPanel();
-		mainNew =  new JButton("Create New");
-		mainList =  new JButton("View List");
-		
-		mainPanel.setVisible(true);
-		mainPanel.setLayout(null);
-		
-		mainNew.setBounds(380,200,400,40);
-		mainList.setBounds(380,300,400,40);
-		mainPanel.setBounds(0,30,1280,690);
 
-		mainNew.addActionListener(this);
-		mainList.addActionListener(this);
-		mainPanel.add(mainNew);
-		mainPanel.add(mainList);
-		frame.add(mainPanel);
-		
-		//***********************************************************************************
-		
-		
 		
 		/*
-		 *******************************Main Panel2*******************************************
-		 */
-		mainPanel2 = new JPanel();
-		mainNewPatient =  new JButton("New Patient");
-		mainNewStaff =  new JButton("New Staff");
-		mainNewPrescription = new JButton("New Prescription");
-		mainNewTest = new JButton("New Test");
-		backButton[0] = new JButton("<");
-		
-		mainPanel2.setVisible(false);
-		mainPanel2.setLayout(null);
-		
-		mainNewPatient.setBounds(380,100,400,40);
-		mainNewStaff.setBounds(380,200,400,40);
-		mainNewPrescription.setBounds(380,300,400,40);
-		mainNewTest.setBounds(380,400,400,40);
-		backButton[0].setBounds(10,10,45,30);
-		
-		mainPanel2.setBounds(0,30,1280,690);
-
-		mainNewPatient.addActionListener(this);
-		mainNewStaff.addActionListener(this);
-		mainNewPrescription.addActionListener(this);
-		mainNewTest.addActionListener(this);
-		backButton[0].addActionListener(this);
-		
-		mainPanel2.add(mainNewPatient);
-		mainPanel2.add(mainNewStaff);
-		mainPanel2.add(mainNewPrescription);
-		mainPanel2.add(mainNewTest);
-		mainPanel2.add(backButton[0]);
-		frame.add(mainPanel2);
-		
-		//***********************************************************************************
-		
-		/*
-		 ****************************Main Panel 3*******************************************
+		 * ****************************************Calendar***************************************
 		 */
 		
-		mainPanel3 = new JPanel();
-		mainPanel3.setLayout(null);
-		mainPanel3.setVisible(false);
-		mainPanel3.setBounds(0,30,1280,690);
-		mainListPatient = new JButton("List Patients");
-		mainListStaff = new JButton("List Staff");
-		backButton[1] = new JButton("<");
 
 
-		backButton[1].setBounds(10,10,45,30);
-		mainListPatient.setBounds(380,200,400,40);
-		mainListStaff.setBounds(380,300,400,40);
-		mainListPatient.addActionListener(this);
-		mainListStaff.addActionListener(this);
-		backButton[1].addActionListener(this);
-		mainPanel3.add(backButton[1]);
-		mainPanel3.add(mainListPatient);
-		mainPanel3.add(mainListStaff);
-		frame.add(mainPanel3);
+
+		//*******************************************************************************************
 		
-		
-		//*********************************************************************************
-		
-		
-		
-		
-		
+
 		
 		
 		/*
@@ -410,7 +333,7 @@ public class GUI implements ActionListener{
 		}
 
 		String[][] tempStaff;
-		tempStaff = db.getStaff();
+		tempStaff = db.getPhysician();
 		String name2[] = new String[tempStaff.length];
 
 		for(int i =0; i <tempStaff.length; i++){
@@ -475,19 +398,137 @@ public class GUI implements ActionListener{
 		 ****************************List Patient Panel************************************ 		
 		 */
 
-		listPatientPanel = new JPanel();
-		listPatientPanel.setLayout(null);
-		listPatientPanel.setVisible(true);
+		patientLocation = new JTabbedPane();
+		listPatientPanel = new JPanel[17];
 		listLabel = new JLabel();
-		listPatientPanel.setPreferredSize(new Dimension(1000,18000));
-		scrollPatient = new JScrollPane(listPatientPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPatient.setBounds(0,30,1184,655);
-		scrollPatient.setVisible(false);
+		for(int i =0; i< 17; i++) {
+		listPatientPanel[i] = new JPanel();
+		listPatientPanel[i].setLayout(null);
+		listPatientPanel[i].setPreferredSize(new Dimension(1000,18000));
+		}
+		
+		scrollPatient = new JScrollPane(listPatientPanel[0],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient.setBounds(0,30,1184,655);		
+		scrollPatient2 = new JScrollPane(listPatientPanel[1],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient2.setBounds(0,30,1184,655);
+		scrollPatient3 = new JScrollPane(listPatientPanel[2],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient3.setBounds(0,30,1184,655);
+		scrollPatient4 = new JScrollPane(listPatientPanel[3],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient4.setBounds(0,30,1184,655);
+		scrollPatient5 = new JScrollPane(listPatientPanel[4],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient5.setBounds(0,30,1184,655);
+		scrollPatient6 = new JScrollPane(listPatientPanel[5],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient6.setBounds(0,30,1184,655);
+		scrollPatient7 = new JScrollPane(listPatientPanel[6],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient7.setBounds(0,30,1184,655);
+		scrollPatient8 = new JScrollPane(listPatientPanel[7],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient8.setBounds(0,30,1184,655);
+		scrollPatient9 = new JScrollPane(listPatientPanel[8],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient9.setBounds(0,30,1184,655);
+		scrollPatient10 = new JScrollPane(listPatientPanel[9],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient10.setBounds(0,30,1184,655);
+		scrollPatient11 = new JScrollPane(listPatientPanel[10],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient11.setBounds(0,30,1184,655);
+		scrollPatient12 = new JScrollPane(listPatientPanel[11],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient12.setBounds(0,30,1184,655);
+		scrollPatient13 = new JScrollPane(listPatientPanel[12],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient13.setBounds(0,30,1184,655);
+		scrollPatient14 = new JScrollPane(listPatientPanel[13],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient14.setBounds(0,30,1184,655);
+		scrollPatient15 = new JScrollPane(listPatientPanel[14],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient15.setBounds(0,30,1184,655);
+		scrollPatient16 = new JScrollPane(listPatientPanel[15],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient16.setBounds(0,30,1184,655);
+		scrollPatient17 = new JScrollPane(listPatientPanel[16],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPatient17.setBounds(0,30,1184,655);
+
+		
+		
+		
+		
+
+		patientLocation.add(scrollPatient, "CCU");
+		patientLocation.add(scrollPatient2, "ER");
+		patientLocation.add(scrollPatient3, "ICU");
+		patientLocation.add(scrollPatient4, "MICU");
+		patientLocation.add(scrollPatient5, "NICU");
+		patientLocation.add(scrollPatient6, "Oncology");
+		patientLocation.add(scrollPatient7, "Open-Heart Surgery");
+		patientLocation.add(scrollPatient8, "OR");
+		patientLocation.add(scrollPatient9, "PACU");
+		patientLocation.add(scrollPatient10, "Hospice");
+		patientLocation.add(scrollPatient11, "PICU");
+		patientLocation.add(scrollPatient12, "Pre-OP");
+		patientLocation.add(scrollPatient13, "Rehabilition");
+		patientLocation.add(scrollPatient14, "SICU");
+		patientLocation.add(scrollPatient15, "Step-Down Unit");
+		patientLocation.add(scrollPatient16, "The Floor");
+		patientLocation.add(scrollPatient17, "TICU");
+
+
+		
+		
+		
+		patientLocation.setBounds(0,30,1184,655);
+		patientLocation.setVisible(false);
+		detailPatient = new JButton[16][100];
+		adtPatient = new JButton[16][100];
+		change = new JButton[16][100];
+		deletePatient = new JButton[16][100];
+
+		
+		detailLabel = new JLabel[16][100];
 
 		drawListPatient();
 
 		//*************************************************************************		
 
+		
+		
+		/*
+		 ****************************List Staff Panel************************************ 		
+		 */
+
+		
+		staffCategory = new JTabbedPane();
+		listStaffPanel = new JPanel[2];
+
+		
+		
+		for(int i =0; i<2; i++) {
+			listStaffPanel[i] = new JPanel();
+			listStaffPanel[i].setLayout(null);
+			listStaffPanel[i].setPreferredSize(new Dimension(1000,18000));
+			}
+		
+
+		
+		
+		scrollStaff = new JScrollPane(listStaffPanel[0],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollStaff.setBounds(0,30,1184,655);
+	
+		scrollStaff2 = new JScrollPane(listStaffPanel[1],JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollStaff2.setBounds(0,30,1184,655);
+
+		
+		staffCategory.add(scrollStaff, "Nurse");
+		staffCategory.add(scrollStaff2, "Physician");
+		
+		
+		staffCategory.setBounds(0,30,1184,655);
+		staffCategory.setVisible(false);
+//		resultStaff = db.getStaff();
+	//	rowStaff = db.getStaffCount();
+		deleteStaff = new JButton[2][100];
+
+
+
+
+		//*************************************************************************		
+		
+		
+		
+		
 
 		/*
 		 ****************************Detail Patient Panel************************************ 		
@@ -523,70 +564,11 @@ public class GUI implements ActionListener{
 		scrollPrescription.setBounds(500,340,650,250);
 		scrollPrescription.setVisible(true);
 		
-		
-		
-		
-		String resultDem[][] = null;
-
-		resultDem = db.getDemographics();
-		detailLabel = new JLabel[rowPatient];
-		for(int i =0; i<rowPatient; i++) {
-			detailLabel[i] = new JLabel("<html>"+resultPatient[i][1] + " " + resultPatient[i][2] + " <br/>OHIP: " 
-					+resultDem[i][0] +" <br/>Date of Birth: "+resultDem[i][1] +" <br/>Sex: "+resultDem[i][2] +" <br/>Height: "+resultDem[i][3] +" <br/>Weight: "+resultDem[i][4] +" <br/>Blood Type: "+resultDem[i][5] 
-							+" <br/>Address: " +resultDem[i][6]+"</html>");
-			detailLabel[i].setBounds(30,10,1200,150);
-		}
-
-
-
-		
-		
-		
 
 		//*************************************************************************		
 
 
-		/*
-		 ****************************List Staff Panel************************************ 		
-		 */
-
-		listStaffPanel = new JPanel();
-		listStaffPanel.setLayout(null);
-		listStaffPanel.setVisible(true);
-		listLabel = new JLabel();
-		listStaffPanel.setPreferredSize(new Dimension(1000,1200));
-		scrollStaff = new JScrollPane(listStaffPanel,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollStaff.setBounds(0,30,1184,655);
-		scrollStaff.setVisible(false);
-		resultStaff = db.getStaff();
-		rowStaff = db.getStaffCount();
-		listStaffLabel = new JLabel[rowStaff];
-		deleteStaff = new JButton[rowStaff];
-
-		JSeparator split3 = new JSeparator();
-		split3.setOrientation(SwingConstants.HORIZONTAL); 
-
-		for(int i =0; i<rowStaff; i++) {
-			deleteStaff[i] = new JButton("Delete");
-			listStaffLabel[i] = new JLabel("<html> Physician: "+resultStaff[i][1] + " " + resultStaff[i][2]+"</html>");
-			listStaffLabel[i].setBounds(30,30*(i+1)*2,1200,20);
-			deleteStaff[i].setBounds(1000,70*(i+1)*2,80,20);
-			deleteStaff[i].addActionListener(this);
-			split3.setBounds(0,90*(i+1)*2,1200,10);
-
-			listStaffPanel.add(deleteStaff[i]);
-			listStaffPanel.add(listStaffLabel[i]);
-			listStaffPanel.add(split3);
-
-
-
-
-		}
-
-
-
-
-		//*************************************************************************		
+		
 
 
 
@@ -604,8 +586,8 @@ public class GUI implements ActionListener{
 		frame.add(infoPanel);
 		frame.add(prescriptionPanel);
 		frame.add(testPanel);
-		frame.add(scrollPatient);
-		frame.add(scrollStaff);
+		frame.add(patientLocation);
+		frame.add(staffCategory);
 
 
 		//Window Preferences
@@ -621,8 +603,6 @@ public class GUI implements ActionListener{
 		menuNewStaff.addActionListener(this);
 		menuNewPrescription.addActionListener(this);
 		menuNewTest.addActionListener(this);
-		menuOpen.addActionListener(this);
-		menuSave.addActionListener(this);
 		menuExit.addActionListener(this);
 		menuListPatient.addActionListener(this);
 		menuListStaff.addActionListener(this);
@@ -641,70 +621,41 @@ public class GUI implements ActionListener{
 
 
 	public void actionPerformed(ActionEvent e) {
+
 		
-		if(e.getSource() == mainNew) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(true);
-			mainPanel3.setVisible(false);
-			infoPanel.setVisible(false);
-			staffPanel.setVisible(false);
-			prescriptionPanel.setVisible(false);
-			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
-			detailPanel.setVisible(false);
-			
-		}
-		if(e.getSource() == mainNewPatient) {
-			menuNewPatient.doClick();
-		}
-		if(e.getSource() == mainNewPrescription) {
-			menuNewPrescription.doClick();
-		}
-		if(e.getSource() == mainNewStaff) {
-			menuNewStaff.doClick();
-		}
-		if(e.getSource() == mainNewTest) {
-			menuNewTest.doClick();
-		}
-		if(e.getSource() == mainListPatient) {
-			menuListPatient.doClick();
-		}
-		if(e.getSource() == mainListStaff) {
-			menuListStaff.doClick();
-		}
-		
-		
-		
-		
-		for(int i = 0; i< 7; i++) {
+		for(int i =0; i< 6; i++ ) {
 		if(e.getSource() == backButton[i]) {
-			mainPanel.setVisible(true);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
+			
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
+			patientLocation.setVisible(false);
+			staffCategory.setVisible(false);
 			detailPanel.setVisible(false);
 			
 		}
 		}
-		if(e.getSource() == mainList) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(true);
+		
+
+
+		
+		
+	
+		
+		if(e.getSource() == backButton[6]) {
+			staffCategory.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
+			patientLocation.setVisible(true);
 			detailPanel.setVisible(false);
 			
 		}
+		
+		
+
 		
 		if(e.getSource() == createPatient) {
 			//height fix
@@ -796,15 +747,12 @@ public class GUI implements ActionListener{
 		}
 
 		if(e.getSource() == menuNewPatient) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
+			staffCategory.setVisible(false);
 			infoPanel.setVisible(true);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
+			patientLocation.setVisible(false);
 			detailPanel.setVisible(false);
 
 			infoPanel.add(firstLabel);
@@ -820,15 +768,12 @@ public class GUI implements ActionListener{
 		}
 
 		if(e.getSource() == menuNewStaff) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
+			staffCategory.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(true);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
+			patientLocation.setVisible(false);
 			detailPanel.setVisible(false);
 
 			infoPanel.remove(firstLabel);
@@ -846,27 +791,21 @@ public class GUI implements ActionListener{
 		}
 
 		if(e.getSource() == menuNewPrescription) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
+			staffCategory.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(true);
 			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
+			patientLocation.setVisible(false);
 			detailPanel.setVisible(false);
 		}
 		if(e.getSource() == menuNewTest) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
+			staffCategory.setVisible(false);
 			infoPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(true);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(false);
+			patientLocation.setVisible(false);
 			detailPanel.setVisible(false);
 
 		}
@@ -879,85 +818,98 @@ public class GUI implements ActionListener{
 
 
 		if(e.getSource() == menuListPatient) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
+			staffCategory.setVisible(false);
 			infoPanel.setVisible(false);
 			detailPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			scrollStaff.setVisible(false);
-			scrollPatient.setVisible(true);
+			
+			patientLocation.setVisible(true);
 
 			drawListPatient();
 		}
 
 
 		if(e.getSource() == menuListStaff) {
-			mainPanel.setVisible(false);
-			mainPanel2.setVisible(false);
-			mainPanel3.setVisible(false);
 			infoPanel.setVisible(false);
 			detailPanel.setVisible(false);
 			staffPanel.setVisible(false);
 			prescriptionPanel.setVisible(false);
 			testPanel.setVisible(false);
-			scrollPatient.setVisible(false);
-			scrollStaff.setVisible(true);
-
-
-
-
-
-
+			patientLocation.setVisible(false);
+			staffCategory.setVisible(true);
 
 		}
 
 
 
+		for(int h = 0; h< 16; h++) {
 		for(int i =0; i< rowPatient; i++) {
-			if(e.getSource() == deletePatient[i]) {
-
-				int id =Integer.parseInt(resultPatient[i][0]);
+			if(e.getSource() == deletePatient[h][i]) {
 
 
-				db.deletePatient(id);
+				locationPatient= db.getLocationPatient(h+1);
+
+
+				db.deletePatient(Integer.parseInt(locationPatient[i][0]));
 
 				drawListPatient();
 
 			}
-		}	
+		}
+		}
+
+		for(int h =0; h< 16; h++) {
 
 		for(int i = 0; i< rowPatient; i++) {
-			if(e.getSource() == detailPatient[i]) {
-
+			if(e.getSource() == detailPatient[h][i]) {
 				detailPanel.removeAll();
 				prescriptionPanel.removeAll();
 				detailPanel3.removeAll();
-				mainPanel.setVisible(false);
-				mainPanel2.setVisible(false);
-				mainPanel3.setVisible(false);
+				staffCategory.setVisible(false);
 				infoPanel.setVisible(false);
 				detailPanel.setVisible(true);			
 				staffPanel.setVisible(false);
 				prescriptionPanel.setVisible(false);
 				testPanel.setVisible(false);
-				scrollPatient.setVisible(false);
-				scrollStaff.setVisible(false);
+				patientLocation.setVisible(false);
+			
+				locationPatient= db.getLocationPatient(h+1);
 
-				int row = db.getADTCount(Integer.parseInt(resultPatient[i][0]));
+				int row = db.getADTCount(Integer.parseInt(locationPatient[i][0]));
 
-				ADT = new String[row][6];
-				ADT = db.getADT(Integer.parseInt(resultPatient[i][0]));
+				ADT = new String[row][7];
+				
+
+				ADT = db.getADT(Integer.parseInt(locationPatient[i][0]));
+				
+				String Location;
+			
+				Location = db.getLocationName(Integer.parseInt(ADT[0][6]));
+				
+				
+				
+
 				JLabel label2[] = new JLabel[row];
 
+				resultDemographics = db.getPatientDemographic(Integer.parseInt(locationPatient[i][0]));
+				 patients = db.getName(Integer.parseInt(locationPatient[i][0]));
+					
+				
+				
+				
+		  detailLabel[h][i] =  new JLabel("<html>"+patients[0] + " " + patients[1] + " <br/>OHIP: " 
+						+resultDemographics[1] +" <br/>Date of Birth: "+resultDemographics[2] +" <br/>Sex: "+resultDemographics[3] +" <br/>Height: "+resultDemographics[4] +" <br/>Weight: "+resultDemographics[5] +" <br/>Blood Type: "+resultDemographics[6] 
+								+" <br/>Address: " +resultDemographics[7]+"</html>");
 
-
+		 
+		  
+		  detailLabel[h][i].setBounds(30,40, 500, 200);
 				for(int j =0; j < row; j++) {
 
 					if(ADT[j][3] == null && ADT[j][4] == null) {
-						label2[j] = new JLabel("<html>"+" ADT: "+ADT[j][1] +" <br/>Admition Date: "+ADT[j][2]+" <br/> Reason: "+ADT[j][5]+ "</html>"); 
+						label2[j] = new JLabel("<html>"+" ADT: "+ADT[j][1] +" <br/>Admition Date: "+ADT[j][2]+" <br/> Reason: "+ADT[j][5]+ " <br/> Location: "+Location+"</html>"); 
 					}
 
 					if(ADT[j][2] == null && ADT[j][4] == null) {
@@ -1012,34 +964,34 @@ public class GUI implements ActionListener{
 				detailPanel.add(Prescriptionlabel);
 				detailPanel.add(scrollPrescription);
 				detailPanel.add(backButton[6]);
-				
-				detailPanel.add(detailLabel[i]);
+				detailPanel.add(detailLabel[h][i]);
 
 			}
 		}
 
+		}
 
-
-
+		for(int h = 0; h< 16; h++) {
 		for(int i = 0; i< rowPatient; i++) {
-			if(e.getSource() == adtPatient[i]) {
+			if(e.getSource() == adtPatient[h][i]) {
 
-				resultPatient = db.getPatient();
+		
+				locationPatient= db.getLocationPatient(h+1);
+				 patients = db.getName(Integer.parseInt(locationPatient[i][0]));
+
+				 pane = new JDialog();
 
 
-				JDialog pane = new JDialog();
+				change[h][i] = new JButton("Update");
+				change[h][i].addActionListener(this);
 
-
-				change = new JButton("Update");
-				change.addActionListener(this);
-
-				adt2 = new JComboBox(adtList);
-				unit2 = new JComboBox(unitList);
+				adt2 = new JComboBox<String>(adtList);
+				unit2 = new JComboBox<String>(unitList);
 
 				JLabel adtLabel = new JLabel("ADT: ");
 				JLabel unitLabel = new JLabel("Unit: ");
 				JLabel label = new JLabel("To");
-				JLabel name = new JLabel(resultPatient[i][1]+ " " + resultPatient[i][2]);
+				JLabel name = new JLabel(patients[0]+ " " + patients[1]);
 
 
 				pane.add(adt2);
@@ -1048,7 +1000,7 @@ public class GUI implements ActionListener{
 				pane.add(unitLabel);
 				pane.add(label);
 				pane.add(name);
-				pane.add(change);
+				pane.add(change[h][i]);
 
 				pane.setLayout(null);
 				pane.setVisible(true);
@@ -1061,7 +1013,7 @@ public class GUI implements ActionListener{
 				adtLabel.setBounds(30,60,100,20);
 				unitLabel.setBounds(200,60,100,20);
 				label.setBounds(150,80,100,20);
-				change.setBounds(110,110,100,20);
+				change[h][i].setBounds(110,110,100,20);
 				pane.setTitle("ADT Status");
 
 
@@ -1069,113 +1021,194 @@ public class GUI implements ActionListener{
 
 
 			}
-			if(e.getSource() == change) {
-
-				db.createADT(resultPatient[i][0].toString(), adt2.getSelectedItem().toString(), unit2.getSelectedItem().toString());
-
+			if(e.getSource() == change[h][i]) {
+				db.createADT(locationPatient[i][0].toString(), adt2.getSelectedItem().toString(), unit2.getSelectedItem().toString());
+				drawListPatient();
+				pane.setVisible(false);
+				
 			}
 		}
 
 
-
-
-		for(int i =0; i< rowStaff; i++) {
-			if(e.getSource() == deleteStaff[i]) {
-
-				int id =Integer.parseInt(resultStaff[i][0]);
-
-
-				db.deleteStaff(id);
-			}
 		}
 
+		
+
+		
+		for(int h = 0; h< 2; h++) {
+			for(int i =0; i< rowStaff; i++) {
+				if(e.getSource() == deleteStaff[h][i]) {
 
 
 
+					int id =Integer.parseInt(resultStaff[i][0]);
+
+					if(h==0) {
+					db.deletePhysician(id);
+					}
+					if(h==1) {
+						db.deleteNurse(id);
+						}
+					drawListStaff();
+
+				}
+			}
+			}
+		
+		
 	}
-
-
+		
 
 	// *********************************************************************************************************************************************'	
 
 
 
 	public void drawListPatient() {
-		listPatientPanel.removeAll();
-		String resultDemographics[][] = null;
-		resultPatient = db.getPatient();
-		resultDemographics = db.getDemographics();
-		rowPatient = db.getPatientCount();
+		for(int j =0; j < 16; j++) {
+		listPatientPanel[j].removeAll();
 
+		
+		
+		
+		rowPatient = db.getLocationPatientCount(j+1);
+	
+		locationPatient= db.getLocationPatient(j+1);
+		
+		
 		JSeparator[] split = new JSeparator[rowPatient];
 
 		listLabels = new JLabel[rowPatient];
-		deletePatient = new JButton[rowPatient];
-		detailPatient = new JButton[rowPatient];
-		adtPatient = new JButton[rowPatient];
-
-		
+	
 
 		for(int i =0; i<rowPatient; i++) {
 			split[i] = new JSeparator();
-
+	
 			split[i].setOrientation(SwingConstants.HORIZONTAL); 
+			resultDemographics = db.getPatientDemographic(Integer.parseInt(locationPatient[i][0]));
+		 patients = db.getName(Integer.parseInt(locationPatient[i][0]));
+			
+			
+			deletePatient[j][i] = new JButton("Delete");
+			detailPatient[j][i] = new JButton("Details");
+			adtPatient[j][i] = new JButton("ADT");
 
-			deletePatient[i] = new JButton("Delete");
-			detailPatient[i] = new JButton("Details");
-			adtPatient[i] = new JButton("ADT");
-
-			listLabels[i] = new JLabel("<html>"+resultPatient[i][1] + " " + resultPatient[i][2] + " <br/>OHIP: " 
-					+resultDemographics[i][0] +" <br/>Date of Birth: "+resultDemographics[i][1] +" <br/>Sex: "+resultDemographics[i][2] +" <br/>Height: "+resultDemographics[i][3] +" <br/>Weight: "+resultDemographics[i][4] +" <br/>Blood Type: "+resultDemographics[i][5] 
-							+" <br/>Address: " +resultDemographics[i][6]+"</html>");
+			listLabels[i] = new JLabel("<html>"+patients[0] + " " + patients[1] + " <br/>OHIP: " 
+					+resultDemographics[1] +" <br/>Date of Birth: "+resultDemographics[2] +" <br/>Sex: "+resultDemographics[3] +" <br/>Height: "+resultDemographics[4] +" <br/>Weight: "+resultDemographics[5] +" <br/>Blood Type: "+resultDemographics[6] 
+							+" <br/>Address: " +resultDemographics[7]+"</html>");
 
 			if(i == 1) {
 				listLabels[i].setBounds(30,180,1200,150);
-				deletePatient[i].setBounds(1000,320,80,20);
-				detailPatient[i].setBounds(400,320,80,20);
-				adtPatient[i].setBounds(500,320,80,20);
+				deletePatient[j][i].setBounds(1000,320,80,20);
+				detailPatient[j][i].setBounds(400,320,80,20);
+				adtPatient[j][i].setBounds(500,320,80,20);
 
 				
 			}else if(i > 0){
 
 				listLabels[i].setBounds(30,180*i,380,150);
-				deletePatient[i].setBounds(1000,(180*i)+140,80,20);
-				detailPatient[i].setBounds(400,(180*i)+140,80,20);
-				adtPatient[i].setBounds(500,(180*i)+140,80,20);
+				deletePatient[j][i].setBounds(1000,(180*i)+140,80,20);
+				detailPatient[j][i].setBounds(400,(180*i)+140,80,20);
+				adtPatient[j][i].setBounds(500,(180*i)+140,80,20);
 				
 			}else {listLabels[i].setBounds(30,10,1200,150);
-			deletePatient[i].setBounds(1000,140,80,20);
-			detailPatient[i].setBounds(400,140,80,20);
-			adtPatient[i].setBounds(500,140,80,20);
+			deletePatient[j][i].setBounds(1000,140,80,20);
+			detailPatient[j][i].setBounds(400,140,80,20);
+			adtPatient[j][i].setBounds(500,140,80,20);
 
 			}
-			deletePatient[i].addActionListener(this);
-			detailPatient[i].addActionListener(this);
-			adtPatient[i].addActionListener(this);
+			deletePatient[j][i].addActionListener(this);
+			detailPatient[j][i].addActionListener(this);
+			adtPatient[j][i].addActionListener(this);
 			split[i].setBounds(0,90*(i+1)*2,1200,10);
 
-			listPatientPanel.add(listLabels[i]);
-			listPatientPanel.add(detailPatient[i]);
-			listPatientPanel.add(deletePatient[i]);
-			listPatientPanel.add(adtPatient[i]);
+			listPatientPanel[j].add(listLabels[i]);
+			listPatientPanel[j].add(detailPatient[j][i]);
+			listPatientPanel[j].add(deletePatient[j][i]);
+			listPatientPanel[j].add(adtPatient[j][i]);
 
-			listPatientPanel.add(split[i]);
+			listPatientPanel[j].add(split[i]);
 
 		}
 
-		listPatientPanel.validate();
-		listPatientPanel.repaint();
-
+		listPatientPanel[j].validate();
+		listPatientPanel[j].repaint();
+		}
 	}
 
 
+	
+	public void drawListStaff() {
+		for(int j =0; j < 2; j++) {
+		listStaffPanel[j].removeAll();
 
+		
+		if(j==0) {
+			rowStaff = db.getPhysicianCount();
+			
+			resultStaff= db.getPhysician();
+		}
+		
+		if(j==1) {
+			rowStaff = db.getNurseCount();
+			
+			resultStaff= db.getNurse();	
+		}
+	
+		
+		
+		JSeparator[] split = new JSeparator[rowStaff];
+
+		listStaffLabel = new JLabel[rowStaff];
+		
+
+		for(int i =0; i<rowStaff; i++) {
+			split[i] = new JSeparator();
+	
+			split[i].setOrientation(SwingConstants.HORIZONTAL); 
+			
+			
+			deleteStaff[j][i] = new JButton("Delete");
+
+			listStaffLabel[i] = new JLabel("<html>"+resultStaff[i][1] + " " + resultStaff[i][2]);
+
+			if(i == 1) {
+				listStaffLabel[i].setBounds(30,180,1200,150);
+				deleteStaff[j][i].setBounds(1000,320,80,20);
+
+				
+			}else if(i > 0){
+
+				listStaffLabel[i].setBounds(30,180*i,380,150);
+				deleteStaff[j][i].setBounds(1000,(180*i)+140,80,20);
+				
+			}else {
+				listStaffLabel[i].setBounds(30,10,1200,150);
+			deleteStaff[j][i].setBounds(1000,140,80,20);
+
+			}
+			deleteStaff[j][i].addActionListener(this);
+			split[i].setBounds(0,90*(i+1)*2,1200,10);
+
+			listStaffPanel[j].add(listStaffLabel[i]);
+			listStaffPanel[j].add(deleteStaff[j][i]);
+
+			listStaffPanel[j].add(split[i]);
+
+		}
+
+		listStaffPanel[j].validate();
+		listStaffPanel[j].repaint();
+		}
+	}
+
+	
+	
+	
 	/*
 	 * checkInfo - Verifies that the contents in the info Panel follow the proper structure
 	 * @return boolean - Variable to output result
 	 */
 	public boolean checkPatientInfo() {
-		String[] result = new String[8];
 		String param[] = new String[13];
 		param[0] = firstName.getText();
 		param[1] = lastName.getText();

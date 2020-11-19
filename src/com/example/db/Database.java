@@ -45,8 +45,8 @@ public class Database {
  				stmt = conn.prepareCall("{CALL Appointment(?,?,?,?)}");
 				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(att[0]));
 				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(att[1]));
-				stmt.setInt(3, Integer.valueOf(att[3]));
-				stmt.setInt(4, Integer.valueOf(att[4]));
+				stmt.setInt(3, Integer.valueOf(att[2]));
+				stmt.setInt(4, Integer.valueOf(att[3]));
 
 				ResultSet rs = stmt.executeQuery();
 		      
@@ -63,10 +63,180 @@ public class Database {
 			
 		}
 		
+		public String[] getPatientDemographic(int id) {
+			String[] patient = null; 
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL GetPatientDemographic(?)}");
+ 				stmt.setInt(1, id);
+				
+				ResultSet rs = stmt.executeQuery();
+		      
+						
+				
+				patient = new String[8];
+						        if(rs.next()) {
+		        	patient[0] = rs.getString(1);
+		        	patient[1] =rs.getString(2);
+		        	patient[2] =rs.getString(3);
+		        	patient[3] =rs.getString(4);
+		        	patient[4] =rs.getString(5);
+		        	patient[5] =rs.getString(6);
+		        	patient[6] =rs.getString(7);
+		        	patient[7] =rs.getString(8);
+		        	
+		        }
+
+			
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			
+			
+			return patient;
+			
+		}
 		
 		
 		
 		
+		public String[] getBloodTest(int id) {
+			String[] test = null; 
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL GetBloodTest(?)}");
+ 				stmt.setInt(1, id);
+				
+				ResultSet rs = stmt.executeQuery();
+				
+				test = new String[7];
+						        if(rs.next()) {
+		        	test[0] = rs.getString(1);
+		        	test[1] =rs.getString(2);
+		        	test[2] =rs.getString(3);
+		        	test[3] =rs.getString(4);
+		        	test[4] =rs.getString(5);
+		        	test[5] =rs.getString(6);
+		        	test[6] =rs.getString(7);
+		        	
+		        }
+
+     rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		   
+			return test;
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public String[][] getLocationPatient(int id) {
+			int row = getLocationPatientCount(id);
+			String[][] patient = null; 
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL GetLocationPatient(?)}");
+ 				stmt.setInt(1, id);
+				
+				ResultSet rs = stmt.executeQuery();
+		      
+						
+				
+				patient = new String[row][3];
+				for(int i=0; i < row; i++) {
+		        if(rs.next()) {
+		        	patient[i][0] = rs.getString(1);
+		        	patient[i][1] =rs.getString(2);
+		        	patient[i][2] =rs.getString(3);
+		        	
+		        }
+
+				}
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			
+			
+			return patient;
+			
+		}
+		
+		public int getLocationPatientCount(int id) {
+			  CallableStatement stmt;
+			  String result = "";
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL GetLocationPatientCount(?)}");
+ 				stmt.setInt(1, id);
+				
+				ResultSet rs = stmt.executeQuery();
+		      
+						
+				
+				
+		        if(rs.next()) {
+		        	result = rs.getString(1);
+		
+		        	
+		        }
+
+				
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			return Integer.parseInt(result);
+		}
 		
 		public String[][] getApp(String start, String end) {
 			String result = AppCount(start, end);
@@ -185,6 +355,33 @@ public class Database {
 			
 		}
 		
+		
+		public void deleteLocationPatient(int id) {
+			  CallableStatement stmt;
+			try {
+				
+ 				stmt = conn.prepareCall("{CALL DeleteLocationPatient(?)}");
+ 				stmt.setInt(1, id);
+				
+ 				stmt.executeQuery();
+        
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		public void createPatient(String[] att) {
 			/*
 			 * Test
@@ -270,12 +467,10 @@ public class Database {
 
 				try {
 
-				stmt = conn.prepareCall("CALL GetLocationID(?,?)");
+				stmt = conn.prepareCall("CALL GetLocationID(?)");
 				stmt.setString(1, att[11]);
-				stmt.setInt(2, java.sql.Types.INTEGER);
 				
-				stmt1 = conn.prepareCall("CALL LastIndex(?)");
-				stmt1.setInt(1, java.sql.Types.INTEGER);
+				stmt1 = conn.prepareCall("CALL LastIndex()");
 				
 
 				
@@ -365,12 +560,9 @@ public class Database {
 
 				try {
 
-				stmt = conn.prepareCall("CALL GetLocationID(?,?)");
+				stmt = conn.prepareCall("CALL GetLocationID(?)");
 				stmt.setString(1, unit);
-				stmt.setInt(2, java.sql.Types.INTEGER);
 				
-				
-
 				
 				 ResultSet rs = stmt.executeQuery();
 				  if(rs.next()) {
@@ -394,6 +586,7 @@ public class Database {
 
 					}
 					if(adt == "Transfer") {
+
 						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
 
 						stmt2.setString(1, adt);
@@ -404,7 +597,7 @@ public class Database {
 						stmt2.setString(6,result);
 						stmt2.setString(7,PatientID);
 						stmt2.execute();
-
+						UpdateLocation(PatientID, result);
 						
 
 					}
@@ -433,6 +626,34 @@ public class Database {
 			}	
 			
 		}
+		
+		public void UpdateLocation(String patientID, String locationID) {
+	
+	
+			CallableStatement stmt;
+
+				try {
+				stmt = conn.prepareCall("CALL UpdateLocation(?,?)");
+				stmt.setInt(1, Integer.parseInt(patientID));
+				stmt.setInt(2, Integer.parseInt(locationID));
+
+				
+				stmt.executeQuery();
+			
+				
+				stmt.close();
+		     
+		       
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			
+		}
+			
+	
+		
+		
 		
 		public void createStaff(String[] att) {
 			/*
@@ -510,7 +731,7 @@ public class Database {
 		
 		public void deletePatient(int id) {
 			
-			 
+			 deleteLocationPatient(id);
 			  CallableStatement stmt;
 			try {
 				
@@ -721,14 +942,14 @@ public class Database {
 	
 		
 		
-		public String[][] getStaff() {
-			int row = getPatientCount();
+		public String[][] getPhysician() {
+			int row = getPhysicianCount();
 			String[][] staff = null; 
 			
 			  CallableStatement stmt;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetStaff()}");
+				stmt = conn.prepareCall("{CALL GetPhysician()}");
 								
 				ResultSet rs = stmt.executeQuery();
 		        
@@ -760,6 +981,48 @@ public class Database {
 			
 			return staff;
 		}
+		
+		public String[][] getNurse() {
+			int row = getNurseCount();
+			String[][] staff = null; 
+			
+			  CallableStatement stmt;
+			try {
+				
+				stmt = conn.prepareCall("{CALL GetNurse()}");
+								
+				ResultSet rs = stmt.executeQuery();
+		        
+						
+				
+				staff = new String[row][3];
+				for(int i=0; i < row; i++) {
+		        if(rs.next()) {
+		        	staff[i][0] = rs.getString(1);
+		        	staff[i][1] =rs.getString(2);
+		        	staff[i][2] =rs.getString(3);
+		        	
+		        }
+
+				}
+			
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			
+			
+			return staff;
+		}
+		
+		
 		
 		
 		public String[][] getPrescription(int id) {
@@ -881,12 +1144,12 @@ public class Database {
 			return row;
 		}
 		
-		public int getStaffCount() {
+		public int getPhysicianCount() {
 			int row = 0;
 			
 		   CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("CALL StaffCount()");
+				stmt = conn.prepareCall("CALL PhysicianCount()");
 			
 				
 				
@@ -909,6 +1172,37 @@ public class Database {
 		        
 			return row;
 		}
+		
+		public int getNurseCount() {
+			int row = 0;
+			
+		   CallableStatement stmt;
+			try {
+				stmt = conn.prepareCall("CALL NurseCount()");
+			
+				
+				
+				ResultSet rs = stmt.executeQuery();
+				
+				if(rs.next()) {
+			        row = Integer.parseInt(rs.getString(1));
+			        }
+				
+				
+
+		        
+		        rs.close();
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+			return row;
+		}	
+		
+		
 		
 		public int getPrescriptionCount(int id) {
 			int row = 0;
@@ -1019,13 +1313,13 @@ public class Database {
 			return row;
 		}
 		
-		public void deleteStaff(int id) {
+		public void deletePhysician(int id) {
 			
 			 
 		
 			  CallableStatement stmt;
 			try {
-				stmt = conn.prepareCall("CALL DeleteStaff(?)");
+				stmt = conn.prepareCall("CALL DeletePhysician(?)");
 				stmt.setInt(1, id);
 				stmt.execute();
 			
@@ -1042,5 +1336,47 @@ public class Database {
 			
 
 		}
+		
+		
+		public void deleteNurse(int id) {
+			
+			 
+			
+			  CallableStatement stmt;
+			try {
+				stmt = conn.prepareCall("CALL DeleteNurse(?)");
+				stmt.setInt(1, id);
+				stmt.execute();
+			
+
+			
+
+		        
+		        stmt.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	
 }
