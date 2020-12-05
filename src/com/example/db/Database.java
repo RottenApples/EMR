@@ -7,9 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Database {
 	
@@ -17,16 +15,16 @@ public class Database {
 	private static final String CONN_STRING = "jdbc:mysql://localhost:3306/test";
 	private static final String USERNAME = "martin";
 	private String textField;
-	private Connection conn;
+	private Connection connection;
 	
 		public Database() {
 			
 			
-		conn = null;
+		connection = null;
 
 		   try {
 		        
-		        conn = DriverManager.getConnection(CONN_STRING,USERNAME,PASSWORD);
+		        connection = DriverManager.getConnection(CONN_STRING,USERNAME,PASSWORD);
 		        System.out.println("Connected");
 		        
 		      
@@ -39,21 +37,22 @@ public class Database {
 		public void App(String att[]) {
 			
 
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL Appointment(?,?,?,?)}");
-				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(att[0]));
-				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(att[1]));
-				stmt.setInt(3, Integer.valueOf(att[2]));
-				stmt.setInt(4, Integer.valueOf(att[3]));
+ 				procedure = connection.prepareCall("{CALL Appointment(?,?,?,?,?)}");
+				procedure.setTimestamp(1, java.sql.Timestamp.valueOf(att[0]));
+				procedure.setTimestamp(2, java.sql.Timestamp.valueOf(att[1]));
+				procedure.setInt(3, Integer.valueOf(att[2]));
+				procedure.setString(4, att[3]);
+				procedure.setString(5, att[4]);
 
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		      
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -63,28 +62,56 @@ public class Database {
 			
 		}
 		
-		public String[] getPatientDemographic(int id) {
-			String[] patient = null; 
-			  CallableStatement stmt;
+		public void removeApp(int id) {
+			
+
+			  CallableStatement procedure;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetPatientDemographic(?)}");
- 				stmt.setInt(1, id);
+				procedure = connection.prepareCall("{CALL RemoveApp(?)}");
+				procedure.setInt(1, id);
 				
-				ResultSet rs = stmt.executeQuery();
+
+				ResultSet result = procedure.executeQuery();
+		      
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+			
+		}
+		
+		
+		
+		
+		public String[] getPatientDemographic(int id) {
+			String[] patient = null; 
+			  CallableStatement procedure;
+			try {
+				
+ 				procedure = connection.prepareCall("{CALL GetPatientDemographic(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
 		      
 						
 				
 				patient = new String[8];
-						        if(rs.next()) {
-		        	patient[0] = rs.getString(1);
-		        	patient[1] =rs.getString(2);
-		        	patient[2] =rs.getString(3);
-		        	patient[3] =rs.getString(4);
-		        	patient[4] =rs.getString(5);
-		        	patient[5] =rs.getString(6);
-		        	patient[6] =rs.getString(7);
-		        	patient[7] =rs.getString(8);
+						        if(result.next()) {
+		        	patient[0] = result.getString(1);
+		        	patient[1] =result.getString(2);
+		        	patient[2] =result.getString(3);
+		        	patient[3] =result.getString(4);
+		        	patient[4] =result.getString(5);
+		        	patient[5] =result.getString(6);
+		        	patient[6] =result.getString(7);
+		        	patient[7] =result.getString(8);
 		        	
 		        }
 
@@ -92,8 +119,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -109,31 +136,132 @@ public class Database {
 		
 		
 		
-		
-		public String[] getBloodTest(int id) {
-			String[] test = null; 
-			  CallableStatement stmt;
-			try {
-				
- 				stmt = conn.prepareCall("{CALL GetBloodTest(?)}");
- 				stmt.setInt(1, id);
-				
-				ResultSet rs = stmt.executeQuery();
-				
-				test = new String[7];
-						        if(rs.next()) {
-		        	test[0] = rs.getString(1);
-		        	test[1] =rs.getString(2);
-		        	test[2] =rs.getString(3);
-		        	test[3] =rs.getString(4);
-		        	test[4] =rs.getString(5);
-		        	test[5] =rs.getString(6);
-		        	test[6] =rs.getString(7);
-		        	
-		        }
 
-     rs.close();
-		        stmt.close();
+		public void createProcedure(String att[]) {
+			
+			
+			CallableStatement procedure;
+			try {
+			procedure =	connection.prepareCall("{CALL CreateTreatment(?,?,?)}");
+			procedure.setString(1, att[0]);
+			procedure.setInt(2, Integer.parseInt(att[1]));
+			procedure.setInt(3, Integer.parseInt(att[2]));
+	
+			System.out.println(att[0] + " " + att[1]);
+			procedure.execute();	
+
+		
+
+		
+		       
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}					
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public void createBloodTest(String att[]) {
+			
+			
+			CallableStatement procedure;
+			try {
+			procedure =	connection.prepareCall("{CALL CreateBloodTest(?,?,?,?,?,?)}");
+			procedure.setString(1, att[0]);
+			procedure.setString(2, att[1]);
+			procedure.setString(3, att[2]);
+			procedure.setString(4, att[3]);
+			procedure.setString(5, att[4]);
+			procedure.setString(6, att[5]);
+			
+			procedure.execute();	
+
+		
+
+		
+		       
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}					
+			
+		}
+		
+		
+		
+		public void createUrineTest(String att[]) {
+			
+			
+			CallableStatement procedure;
+			try {
+			procedure =	connection.prepareCall("{CALL CreateUrineTest(?,?,?,?,?,?,?,?,?,?,?)}");
+			procedure.setString(1, att[0]);
+			procedure.setString(2, att[1]);
+			procedure.setString(3, att[2]);
+			procedure.setString(4, att[3]);
+			procedure.setString(5, att[4]);
+			procedure.setString(6, att[5]);
+			procedure.setString(7, att[6]);
+			procedure.setString(8, att[7]);
+			procedure.setString(9, att[8]);
+			procedure.setString(10, att[9]);
+			procedure.setString(11, att[10]);
+			procedure.execute();	
+
+		
+
+		
+		       
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}					
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		public String[][] getBloodTest(int id) {
+			int row = getBloodCount(id);
+				String[][] test = null; 
+			  CallableStatement procedure;
+			try {
+ 				procedure = connection.prepareCall("{CALL GetBloodTest(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+				
+				test = new String[row][8];
+				
+				for(int i =0; i< row; i++) {
+				if(result.next()) {
+		        	test[i][0] = result.getString(1);
+		        	test[i][1] =result.getString(2);
+		        	test[i][2] =result.getString(3);
+		        	test[i][3] =result.getString(4);
+		        	test[i][4] =result.getString(5);
+		        	test[i][5] =result.getString(6);
+		        	test[i][6] =result.getString(7);
+		        	test[i][7] =result.getString(8);
+
+		        }
+				}
+			    result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -146,50 +274,62 @@ public class Database {
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		public String[][] getLocationPatient(int id) {
-			int row = getLocationPatientCount(id);
-			String[][] patient = null; 
-			  CallableStatement stmt;
+		public int getBloodCount(int id) {
+			  CallableStatement procedure;
+			  String result2 = "";
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetLocationPatient(?)}");
- 				stmt.setInt(1, id);
+ 				procedure = connection.prepareCall("{CALL GetBloodCount(?)}");
+ 				procedure.setInt(1, id);
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
+		      
+		        if(result.next()) {
+		        	result2 = result.getString(1);
+		
+		        	
+		        }
+
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        if(result2 == "") {result2="0";}
+			return Integer.parseInt(result2);
+		}
+		
+		public String[][] getSearch(int id) {
+			int row = getSearchCount(id);
+			String[][] patient = null; 
+			  CallableStatement procedure;
+			try {
+				
+ 				procedure = connection.prepareCall("{CALL GetSearch(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
 		      
 						
 				
 				patient = new String[row][3];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	patient[i][0] = rs.getString(1);
-		        	patient[i][1] =rs.getString(2);
-		        	patient[i][2] =rs.getString(3);
-		        	
+		        if(result.next()) {
+		        	patient[i][0] = result.getString(1);
+		        	patient[i][1] =result.getString(2);
+		        	patient[i][2] =result.getString(3);
+		        
+
 		        }
 
 				}
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -203,21 +343,21 @@ public class Database {
 			
 		}
 		
-		public int getLocationPatientCount(int id) {
-			  CallableStatement stmt;
-			  String result = "";
+		public int getSearchCount(int id) {
+			  CallableStatement procedure;
+			  String result2 = "";
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetLocationPatientCount(?)}");
- 				stmt.setInt(1, id);
+				procedure = connection.prepareCall("{CALL GetSearchCount(?)}");
+				procedure.setInt(1, id);
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		      
 						
 				
 				
-		        if(rs.next()) {
-		        	result = rs.getString(1);
+		        if(result.next()) {
+		        	result2 = result.getString(1);
 		
 		        	
 		        }
@@ -226,8 +366,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -235,32 +375,145 @@ public class Database {
 			}
 		        
 		        
-			return Integer.parseInt(result);
+			return Integer.parseInt(result2);
+		}
+		
+		public int getSearchLocation(String id) {
+			  CallableStatement procedure;
+			  String result2 = "";
+			try {
+				
+				procedure = connection.prepareCall("{CALL GetSearchLocation(?)}");
+				procedure.setString(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+		      
+						
+				
+				
+		        if(result.next()) {
+		        	result2 = result.getString(1);
+		
+		        	
+		        }
+
+				
+			
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			return Integer.parseInt(result2);
+		}
+		public String[][] getLocationPatient(int id) {
+			int row = getLocationPatientCount(id);
+			String[][] patient = null; 
+			  CallableStatement procedure;
+			try {
+				
+ 				procedure = connection.prepareCall("{CALL GetLocationPatient(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+		      
+						
+				
+				patient = new String[row][4];
+				for(int i=0; i < row; i++) {
+		        if(result.next()) {
+		        	patient[i][0] = result.getString(1);
+		        	patient[i][1] =result.getString(2);
+		        	patient[i][2] =result.getString(3);
+		        	patient[i][3] =result.getString(4);
+
+		        }
+
+				}
+			
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			
+			
+			return patient;
+			
+		}
+		
+		
+		
+		public int getLocationPatientCount(int id) {
+			  CallableStatement procedure;
+			  String result2 = "";
+			try {
+				
+ 				procedure = connection.prepareCall("{CALL GetLocationPatientCount(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+		      
+						
+				
+				
+		        if(result.next()) {
+		        	result2 = result.getString(1);
+		
+		        	
+		        }
+
+				
+			
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		        
+			return Integer.parseInt(result2);
 		}
 		
 		public String[][] getApp(String start, String end) {
-			String result = AppCount(start, end);
-			int row = Integer.parseInt(result);
+			String result2= AppCount(start, end);
+			int row = Integer.parseInt(result2);
 			String[][] patient = null; 
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetApp(?,?)}");
-				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(start));
-				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(end));
+ 				procedure = connection.prepareCall("{CALL GetApp(?,?)}");
+				procedure.setTimestamp(1, java.sql.Timestamp.valueOf(start));
+				procedure.setTimestamp(2, java.sql.Timestamp.valueOf(end));
 	
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
-				patient = new String[row][5];
+				patient = new String[row][6];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	patient[i][0] = rs.getString(1);
-		        	patient[i][1] =rs.getString(2);
-		        	patient[i][2] =rs.getString(3);
-		          	patient[i][3] = rs.getString(4);
-		        	patient[i][4] =rs.getString(5);
-		        
+		        if(result.next()) {
+		        	patient[i][0] = result.getString(1);
+		        	patient[i][1] =result.getString(2);
+		        	patient[i][2] =result.getString(3);
+		          	patient[i][3] = result.getString(4);
+		        	patient[i][4] =result.getString(5);
+		        	patient[i][5] =result.getString(6);
 		        	
 		        }
 
@@ -268,8 +521,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -282,20 +535,20 @@ public class Database {
 		
 		public String AppCount(String start, String end) {
 			String count = "";
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 			
-				stmt = conn.prepareCall("{CALL AppCount(?,?)}");
-				stmt.setTimestamp(1, java.sql.Timestamp.valueOf(start));
-				stmt.setTimestamp(2, java.sql.Timestamp.valueOf(end));
+				procedure = connection.prepareCall("{CALL AppCount(?,?)}");
+				procedure.setTimestamp(1, java.sql.Timestamp.valueOf(start));
+				procedure.setTimestamp(2, java.sql.Timestamp.valueOf(end));
 
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 				for(int i=0; i < 1; i++) {
-		        if(rs.next()) {
-		        	count = rs.getString(1);
+		        if(result.next()) {
+		        	count = result.getString(1);
 		 
 		        
 		        	
@@ -304,8 +557,8 @@ public class Database {
 				}
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -318,27 +571,27 @@ public class Database {
 		
 		public String[] getName(int id){
 			
-			String[][] patient = new String[1][2];
-			  CallableStatement stmt;
+			String[] patient = new String[2];
+			  CallableStatement procedure;
 			try {
- 				stmt = conn.prepareCall("{CALL GetPatientName(?)}");
-				stmt.setInt(1, id);
+ 				procedure = connection.prepareCall("{CALL GetPatientName(?)}");
+				procedure.setInt(1, id);
 
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 	
 				
-		        if(rs.next()) {
-		        	patient[0][0] = rs.getString(1);
-		        	patient[0][1] =rs.getString(2);
+		        if(result.next()) {
+		        	patient[0] = result.getString(1);
+		        	patient[1] =result.getString(2);
 		        	
 		        }
 
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -347,25 +600,61 @@ public class Database {
 		        
 		        
 			
-			String[] patient2 = new String[2];
-			patient2[0]= patient[0][0];
-			patient2[1]= patient[0][1];
-			return patient2;
+			
+			return patient;
 			
 			
 		}
 		
 		
+	public String[] getPhysicianName(int id){
+			
+			String[] physician = new String[2];
+			  CallableStatement procedure;
+			try {
+ 				procedure = connection.prepareCall("{CALL GetPhysicianName(?)}");
+				procedure.setInt(1, id);
+
+				ResultSet result = procedure.executeQuery();
+		        
+						
+	
+				
+		        if(result.next()) {
+		        	physician[0] = result.getString(1);
+		        	physician[1] =result.getString(2);
+		        	
+		        }
+
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+		  
+			return physician;
+			
+			
+		}
+		
+		
+		
+		
 		public void deleteLocationPatient(int id) {
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL DeleteLocationPatient(?)}");
- 				stmt.setInt(1, id);
+ 				procedure = connection.prepareCall("{CALL DeleteLocationPatient(?)}");
+ 				procedure.setInt(1, id);
 				
- 				stmt.executeQuery();
+ 				procedure.executeQuery();
         
-		        stmt.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -383,30 +672,24 @@ public class Database {
 		
 		
 		public void createPatient(String[] att) {
-			/*
-			 * Test
-			 * result[0] - id - obtained from sql
-			 * result[1] - first name
-			 * result[2] - last name
-			 * flag - 0 or 1
-			 */
 		
-			CallableStatement stmt, stmt2;
+		
+			CallableStatement procedure, procedure2;
 			String sql;
 			try {
-			stmt =	conn.prepareCall("CALL CreatePatient(?,?)");
-			stmt.setString(1, att[1]);
-			stmt.setString(2, att[2]);
-			stmt.execute();	
+			procedure =	connection.prepareCall("CALL CreatePatient(?,?)");
+			procedure.setString(1, att[1]);
+			procedure.setString(2, att[2]);
+			procedure.execute();	
 
-			stmt2 =	conn.prepareCall("{call LastIndex()}");
+			procedure2 =	connection.prepareCall("{call LastIndex()}");
 			
-			ResultSet rs = stmt2.executeQuery();
+			ResultSet result = procedure2.executeQuery();
 			
 
-			while(rs.next()) {
+			while(result.next()) {
 				
-				att[0] = rs.getString(1);
+				att[0] = result.getString(1);
 			}
 			
 			
@@ -421,18 +704,18 @@ public class Database {
 			
 		}
 		public void createDemographics(String att[]) {
-			CallableStatement stmt;
+			CallableStatement procedure;
 			try {
-			stmt =	conn.prepareCall("CALL CreateDemographic(?,?,?,?,?,?,?,?)");
-			stmt.setString(1, att[0]);
-			stmt.setString(2, att[3]);
-			stmt.setString(3, att[4]);
-			stmt.setString(4, att[5]);
-			stmt.setString(5, att[6]);
-			stmt.setString(6, att[7]);
-			stmt.setString(7, att[8]);
-			stmt.setString(8, att[9]);
-			stmt.execute();	
+			procedure =	connection.prepareCall("CALL CreateDemographic(?,?,?,?,?,?,?,?)");
+			procedure.setString(1, att[0]);
+			procedure.setString(2, att[3]);
+			procedure.setString(3, att[4]);
+			procedure.setString(4, att[5]);
+			procedure.setString(5, att[6]);
+			procedure.setString(6, att[7]);
+			procedure.setString(7, att[8]);
+			procedure.setString(8, att[9]);
+			procedure.execute();	
 
 		
 
@@ -455,83 +738,72 @@ public class Database {
 		
 
 			
-			Date date = new Date();
-			long time = date.getTime();
-			String stamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());		
-			
-			String result = ""; 
-			String result2 = "";
+
+			String result3 = ""; 
+			String result4 = "";
 			
 	
-			CallableStatement stmt, stmt1, stmt2;
+			CallableStatement procedure, procedure2, procedure3;
 
 				try {
 
-				stmt = conn.prepareCall("CALL GetLocationID(?)");
-				stmt.setString(1, att[11]);
+				procedure = connection.prepareCall("CALL GetLocationID(?)");
+				procedure.setString(1, att[11]);
 				
-				stmt1 = conn.prepareCall("CALL LastIndex()");
+				procedure2 = connection.prepareCall("CALL LastIndex()");
 				
 
 				
-				 ResultSet rs = stmt.executeQuery();
-				 ResultSet rs2 = stmt1.executeQuery();
-				  if(rs.next()) {
-				        result=rs.getString(1);
+				 ResultSet result = procedure.executeQuery();
+				 ResultSet result2 = procedure2.executeQuery();
+				  if(result.next()) {
+				        result3=result.getString(1);
 				        
 				        }
-				  if(rs2.next()) {
-				     result2 = rs2.getString(1);
+				  if(result2.next()) {
+				     result4 = result2.getString(1);
 				        }
 		     
 				if(att[10].equals("Admit")) {
-					stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
-					stmt2.setString(1, att[10]);
-					stmt2.setTimestamp(2, java.sql.Timestamp.valueOf(stamp));
-					stmt2.setNull(3, java.sql.Types.TIMESTAMP);
-					stmt2.setNull(4, java.sql.Types.TIMESTAMP);
-					stmt2.setString(5,att[12]);
-					stmt2.setString(6,result);
-					stmt2.setString(7,result2);
-					stmt2.execute();
+					procedure3 = connection.prepareCall("CALL CreateADT(?,?,?,?)");
+					procedure3.setString(1, att[10]);
+					procedure3.setString(2,att[12]);
+					procedure3.setString(3,result3);
+					procedure3.setString(4,result4);
+					procedure3.execute();
 
+					createLocationPatient(result4, result3);
 
 			
 
 					}
 					if(att[10].equals("Transfer")) {
-						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+						procedure3 = connection.prepareCall("CALL CreateADTTransfer(?,?,?,?)");
 
-						stmt2.setString(1, att[10]);
-						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
-						stmt2.setTimestamp(3, java.sql.Timestamp.valueOf(stamp));
-						stmt2.setNull(4, java.sql.Types.TIMESTAMP);
-						stmt2.setString(5,att[12]);
-						stmt2.setString(6,result);
-						stmt2.setString(7,result2);
-						stmt2.execute();
+						procedure3.setString(1, att[10]);
+						procedure3.setString(2,att[12]);
+						procedure3.setString(3,result3);
+						procedure3.setString(4,result4);
+						procedure3.execute();
 
 						
 
 					}
 					if(att[10].equals("Discharge")) {
-						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+						procedure3 = connection.prepareCall("CALL CreateADTDischarge(?,?,?,?)");
 
 						
-						stmt2.setString(1, att[10]);
-						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
-						stmt2.setNull(3, java.sql.Types.TIMESTAMP);
-						stmt2.setTimestamp(4, java.sql.Timestamp.valueOf(stamp));
-						stmt2.setString(5,att[12]);
-						stmt2.setString(6,result);
-						stmt2.setString(7,result2);
-						stmt2.execute();
+						procedure3.setString(1, att[10]);
+						procedure3.setString(2,att[12]);
+						procedure3.setString(3,result3);
+						procedure3.setString(4,result4);
+						procedure3.execute();
 
 
 					}
 		
-					rs.close();
-			        rs2.close();
+					result.close();
+			        result2.close();
 		     
 		       
 			} catch (SQLException e) {
@@ -541,83 +813,87 @@ public class Database {
 			
 		}
 		public void createADT(String PatientID, String adt, String unit){
-			/*
-			 * att[10] - adt 
-			 * att[11] -	unit
-			 */
 		
+			
 
-			
-			Date date = new Date();
-			long time = date.getTime();
-			String stamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());		
-			
-			String result = ""; 
-			String result2 = "";
+			String result3 = ""; 
+			String result4 = "";
 			
 	
-			CallableStatement stmt, stmt1, stmt2;
+			CallableStatement procedure, procedure2, procedure3;
 
 				try {
 
-				stmt = conn.prepareCall("CALL GetLocationID(?)");
-				stmt.setString(1, unit);
+				procedure = connection.prepareCall("CALL GetLocationID(?)");
+				procedure.setString(1, unit);
 				
 				
-				 ResultSet rs = stmt.executeQuery();
-				  if(rs.next()) {
-				        result=rs.getString(1);
+				 ResultSet result = procedure.executeQuery();
+				  if(result.next()) {
+				        result3=result.getString(1);
 				        
 				        }
 			
 				if(adt == "Admit") {
-					stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
-					stmt2.setString(1, adt);
-					stmt2.setTimestamp(2, java.sql.Timestamp.valueOf(stamp));
-					stmt2.setNull(3, java.sql.Types.TIMESTAMP);
-					stmt2.setNull(4, java.sql.Types.TIMESTAMP);
-					stmt2.setString(5, null);
-					stmt2.setString(6,result);
-					stmt2.setString(7,PatientID);
-					stmt2.execute();
-
+					procedure3 = connection.prepareCall("CALL CreateADT(?,?,?,?)");
+					procedure3.setString(1, adt);
+					procedure3.setString(2, null);
+					procedure3.setString(3,result3);
+					procedure3.setString(4,PatientID);
+					procedure3.execute();
 
 			
 
 					}
 					if(adt == "Transfer") {
 
-						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+						procedure3 = connection.prepareCall("CALL CreateADTTransfer(?,?,?,?)");
 
-						stmt2.setString(1, adt);
-						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
-						stmt2.setTimestamp(3, java.sql.Timestamp.valueOf(stamp));
-						stmt2.setNull(4, java.sql.Types.TIMESTAMP);
-						stmt2.setString(5, null);
-						stmt2.setString(6,result);
-						stmt2.setString(7,PatientID);
-						stmt2.execute();
-						UpdateLocation(PatientID, result);
+						procedure3.setString(1, adt);
+						procedure3.setString(2, null);
+						procedure3.setString(3,result3);
+						procedure3.setString(4,PatientID);
+						procedure3.execute();
+						UpdateLocation(PatientID, result3);
 						
 
 					}
 					if(adt == "Discharge") {
-						stmt2 = conn.prepareCall("CALL CreateADT(?,?,?,?,?,?,?)");
+						procedure3 = connection.prepareCall("CALL CreateADTDischarge(?,?,?,?)");
 
 						
-						stmt2.setString(1, adt);
-						stmt2.setNull(2, java.sql.Types.TIMESTAMP);
-						stmt2.setNull(3, java.sql.Types.TIMESTAMP);
-						stmt2.setTimestamp(4, java.sql.Timestamp.valueOf(stamp));
-						stmt2.setString(5,null);
-						stmt2.setString(6,result);
-						stmt2.setString(7, PatientID);
-						stmt2.execute();
-
+						procedure3.setString(1, adt);
+						procedure3.setString(2,null);
+						procedure3.setString(3,result3);
+						procedure3.setString(4, PatientID);
+						procedure3.execute();
+						deletePatient(Integer.parseInt(PatientID));
 
 					}
 		
-					rs.close();
+					result.close();
+		     
+		       
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+			
+		}
+		
+		public void createLocationPatient(String patientID, String locationID){
+			CallableStatement procedure;
+
+				try {
+				procedure = connection.prepareCall("CALL createLocationPatient(?,?)");
+				procedure.setInt(1, Integer.parseInt(patientID));
+				procedure.setInt(2, Integer.parseInt(locationID));
+
+				
+				procedure.executeQuery();
+			
+				
+				procedure.close();
 		     
 		       
 			} catch (SQLException e) {
@@ -630,18 +906,18 @@ public class Database {
 		public void UpdateLocation(String patientID, String locationID) {
 	
 	
-			CallableStatement stmt;
+			CallableStatement procedure;
 
 				try {
-				stmt = conn.prepareCall("CALL UpdateLocation(?,?)");
-				stmt.setInt(1, Integer.parseInt(patientID));
-				stmt.setInt(2, Integer.parseInt(locationID));
+				procedure = connection.prepareCall("CALL UpdateLocation(?,?)");
+				procedure.setInt(1, Integer.parseInt(patientID));
+				procedure.setInt(2, Integer.parseInt(locationID));
 
 				
-				stmt.executeQuery();
+				procedure.executeQuery();
 			
 				
-				stmt.close();
+				procedure.close();
 		     
 		       
 			} catch (SQLException e) {
@@ -664,19 +940,19 @@ public class Database {
 	
 
 				try {
-				CallableStatement stmt; 
+				CallableStatement procedure; 
 		
 				if(att[2].equals("Physician")) {
-					stmt = conn.prepareCall("CALL CreatePhysician(?,?)");
-					stmt.setString(1, att[0]);
-					stmt.setString(2, att[1]);
-					stmt.execute();
+					procedure = connection.prepareCall("CALL CreatePhysician(?,?)");
+					procedure.setString(1, att[0]);
+					procedure.setString(2, att[1]);
+					procedure.execute();
 				}
 				else {
-					stmt = conn.prepareCall("CALL CreateNurse(?,?)");
-					stmt.setString(1, att[0]);
-					stmt.setString(2, att[1]);
-					stmt.execute();
+					procedure = connection.prepareCall("CALL CreateNurse(?,?)");
+					procedure.setString(1, att[0]);
+					procedure.setString(2, att[1]);
+					procedure.execute();
 				}
 		     
 		       
@@ -702,24 +978,18 @@ public class Database {
 			 */
 			
 			
-			Date date = new Date();
-			long time = date.getTime();
-			String stamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());	
-		
-	
 		  
-			CallableStatement stmt;
+			CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL CreatePrescription(?,?,?,?,?,?,?)");
-				stmt.setString(1, att[0]);
-				stmt.setString(2, stamp);
-				stmt.setString(3, att[1]);
-				stmt.setString(4, att[2]);
-				stmt.setString(5, att[3]);
-				stmt.setString(6, att[4]);
-				stmt.setString(7, att[5]);
+				procedure = connection.prepareCall("CALL CreatePrescription(?,?,?,?,?,?)");
+				procedure.setString(1, att[0]);
+				procedure.setString(2, att[1]);
+				procedure.setString(3, att[2]);
+				procedure.setString(4, att[3]);
+				procedure.setString(5, att[4]);
+				procedure.setString(6, att[5]);
 
-				stmt.execute();
+				procedure.execute();
 		        
 		        
 		        
@@ -732,12 +1002,12 @@ public class Database {
 		public void deletePatient(int id) {
 			
 			 deleteLocationPatient(id);
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("CALL DeletePatient(?)");
-				stmt.setInt(1, id);
-				stmt.execute();
+				procedure = connection.prepareCall("CALL DeletePatient(?)");
+				procedure.setInt(1, id);
+				procedure.execute();
 
 			
 
@@ -747,27 +1017,25 @@ public class Database {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		       
-			
 			
 		}
 		
 		public String getLocationID(String name) {
 			String location = "";
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetLocationID(?)}");
-				stmt.setString(1, name);
+				procedure = connection.prepareCall("{CALL GetLocationID(?)}");
+				procedure.setString(1, name);
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 			
 				
-		        if(rs.next()) {
-		        	location = rs.getString(1);
+		        if(result.next()) {
+		        	location = result.getString(1);
 		        	
 		        }
 
@@ -775,8 +1043,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -790,21 +1058,21 @@ public class Database {
 			
 			String name = "";
 			String location = "";
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetLocationName(?,?)}");
-				stmt.setInt(1, id);
-				stmt.setString(2, name);
+				procedure = connection.prepareCall("{CALL GetLocationName(?,?)}");
+				procedure.setInt(1, id);
+				procedure.setString(2, name);
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 			
 				
-		        if(rs.next()) {
-		        	location = rs.getString(1);
+		        if(result.next()) {
+		        	location = result.getString(1);
 		        	
 		        }
 
@@ -812,8 +1080,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -826,22 +1094,22 @@ public class Database {
 		
 		public String getLatestLocation(int id) {
 			String location = "";
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetLatestLocation(?)}");
-				stmt.setInt(1, id);
+				procedure = connection.prepareCall("{CALL GetLatestLocation(?)}");
+				procedure.setInt(1, id);
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
-		        if(rs.next()) {
-		        	location = rs.getString(1);
+		        if(result.next()) {
+		        	location = result.getString(1);
 		        	
 		        }
 
 		  
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -855,27 +1123,55 @@ public class Database {
 		
 		
 		
+		public String TotalDosage(int id) {
+			String sum = "";
+			  CallableStatement procedure;
+			try {
+				
+				procedure = connection.prepareCall("{CALL TotalDosage(?)}");
+				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+		        
+		        if(result.next()) {
+		        	sum = result.getString(1);
+		        	
+		        }
 
+		  
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return sum;
+			
+			
+		}
+		
 		
 		public String[][] getPatient() {
 			int row = getPatientCount();
 			String[][] patient = null; 
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetPatient()}");
+ 				procedure = connection.prepareCall("{CALL GetPatient()}");
 
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 				patient = new String[row][3];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	patient[i][0] = rs.getString(1);
-		        	patient[i][1] =rs.getString(2);
-		        	patient[i][2] =rs.getString(3);
+		        if(result.next()) {
+		        	patient[i][0] = result.getString(1);
+		        	patient[i][1] =result.getString(2);
+		        	patient[i][2] =result.getString(3);
 		        	
 		        }
 
@@ -883,8 +1179,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -901,22 +1197,22 @@ public class Database {
 		public String[][] getPatient(int Location) {
 			int row = getPatientCount();
 			String[][] patient = null; 
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
- 				stmt = conn.prepareCall("{CALL GetPatient()}");
+ 				procedure = connection.prepareCall("{CALL GetPatient()}");
 		
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 				patient = new String[row][3];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	patient[i][0] = rs.getString(1);
-		        	patient[i][1] =rs.getString(2);
-		        	patient[i][2] =rs.getString(3);
+		        if(result.next()) {
+		        	patient[i][0] = result.getString(1);
+		        	patient[i][1] =result.getString(2);
+		        	patient[i][2] =result.getString(3);
 		        	
 		        }
 
@@ -924,8 +1220,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -946,21 +1242,21 @@ public class Database {
 			int row = getPhysicianCount();
 			String[][] staff = null; 
 			
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetPhysician()}");
+				procedure = connection.prepareCall("{CALL GetPhysician()}");
 								
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 				staff = new String[row][3];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	staff[i][0] = rs.getString(1);
-		        	staff[i][1] =rs.getString(2);
-		        	staff[i][2] =rs.getString(3);
+		        if(result.next()) {
+		        	staff[i][0] = result.getString(1);
+		        	staff[i][1] =result.getString(2);
+		        	staff[i][2] =result.getString(3);
 		        	
 		        }
 
@@ -968,8 +1264,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -986,21 +1282,21 @@ public class Database {
 			int row = getNurseCount();
 			String[][] staff = null; 
 			
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetNurse()}");
+				procedure = connection.prepareCall("{CALL GetNurse()}");
 								
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 				staff = new String[row][3];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	staff[i][0] = rs.getString(1);
-		        	staff[i][1] =rs.getString(2);
-		        	staff[i][2] =rs.getString(3);
+		        if(result.next()) {
+		        	staff[i][0] = result.getString(1);
+		        	staff[i][1] =result.getString(2);
+		        	staff[i][2] =result.getString(3);
 		        	
 		        }
 
@@ -1008,8 +1304,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1024,74 +1320,210 @@ public class Database {
 		
 		
 		
-		
 		public String[][] getPrescription(int id) {
 			int row = getPrescriptionCount(id);
 			String[][] prescription = null; 
-			 CallableStatement stmt;
+			 CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("{CALL GetPrescription(?)}");
+				procedure = connection.prepareCall("{CALL GetPrescription(?)}");
 			
-				stmt.setInt(1, id);
+				procedure.setInt(1, id);
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 						
 				
 				prescription = new String[row][6];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	prescription[i][0] = rs.getString(1);
-		        	prescription[i][1] =rs.getString(2);
-		        	prescription[i][2] =rs.getString(3);
-		        	prescription[i][3] = rs.getString(4);
-		        	prescription[i][4] =rs.getString(5);
-		        	prescription[i][5] =rs.getString(6);
+		        if(result.next()) {
+		        	prescription[i][0] = result.getString(1);
+		        	prescription[i][1] =result.getString(2);
+		        	prescription[i][2] =result.getString(3);
+		        	prescription[i][3] = result.getString(4);
+		        	prescription[i][4] =result.getString(5);
+		        	prescription[i][5] =result.getString(6);
 		        }
 
 				}
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		      
+			return prescription;
+		}
+		
+		
+		public String[][] getAllPrescriptions() {
+			int row = getPrescriptionCount();
+			String[][] prescription = null; 
+			 CallableStatement procedure;
+			try {
+				
+				procedure = connection.prepareCall("{CALL GetAllPrescriptions()}");
+							
+				ResultSet result = procedure.executeQuery();					
+				
+				prescription = new String[row][8];
+				for(int i=0; i < row; i++) {
+		        if(result.next()) {
+		        	prescription[i][0] = result.getString(1);
+		        	prescription[i][1] =result.getString(2);
+		        	prescription[i][2] =result.getString(3);
+		        	prescription[i][3] = result.getString(4);
+		        	prescription[i][4] =result.getString(5);
+		        	prescription[i][5] =result.getString(6);
+		        	prescription[i][6] =result.getString(7);
+		        	prescription[i][7] =result.getString(8);
+
+		        }
+
+				}
+			
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		      
+			return prescription;
+		}
+		
+		
+		
+		public String[][] getUrineTest(int id) {
+			int row = getUrineCount(id);
+				String[][] test = null; 
+			  CallableStatement procedure;
+			try {
+ 				procedure = connection.prepareCall("{CALL GetUrineTest(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+				
+				test = new String[row][13];
+				
+				for(int i =0; i< row; i++) {
+				if(result.next()) {
+		        	test[i][0] = result.getString(1);
+		        	test[i][1] =result.getString(2);
+		        	test[i][2] =result.getString(3);
+		        	test[i][3] =result.getString(4);
+		        	test[i][4] =result.getString(5);
+		        	test[i][5] =result.getString(6);
+		        	test[i][6] =result.getString(7);
+		        	test[i][7] =result.getString(8);
+		        	test[i][8] =result.getString(9);
+		        	test[i][9] =result.getString(10);
+		        	test[i][10] =result.getString(11);
+		        	test[i][11] =result.getString(12);
+		        	test[i][12] =result.getString(13);
+		        	
+
+		        }
+				}
+			    result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		        
-		        
+		   
+			return test;
 			
-			
-			return prescription;
 		}
+		
+		
+		
+		public int getUrineCount(int id) {
+			  CallableStatement procedure;
+			  String result2 = "";
+			try {
+				
+ 				procedure = connection.prepareCall("{CALL GetUrineCount(?)}");
+ 				procedure.setInt(1, id);
+				
+				ResultSet result = procedure.executeQuery();
+		      
+		        if(result.next()) {
+		        	result2 = result.getString(1);
+		
+		        	
+		        }
+
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        if(result2 == "") {result2="0";}
+			return Integer.parseInt(result2);
+			
+		}
+		
+		
+		public void deletePrescription(int id) {
+			
+			 deleteLocationPatient(id);
+			  CallableStatement procedure;
+			try {
+				
+				procedure = connection.prepareCall("CALL DeletePrescription(?)");
+				procedure.setInt(1, id);
+				procedure.execute();
+
+			
+
+		        
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
 		
 		
 		
 		public String[][] getDemographics() {
 			int row = getPatientCount();
 			String[][] patient = null; 
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("{CALL GetDemographics()}");
+				procedure = connection.prepareCall("{CALL GetDemographics()}");
 				
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		     
 				
 				
 				patient = new String[row][7];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	patient[i][0] =rs.getString(2);
-		        	patient[i][1] =rs.getString(3);
-		        	patient[i][2] =rs.getString(4);
-		        	patient[i][3] =rs.getString(5);
-		        	patient[i][4] =rs.getString(6);
-		        	patient[i][5] =rs.getString(7);
-		        	patient[i][6] =rs.getString(8);
+		        if(result.next()) {
+		        	patient[i][0] =result.getString(2);
+		        	patient[i][1] =result.getString(3);
+		        	patient[i][2] =result.getString(4);
+		        	patient[i][3] =result.getString(5);
+		        	patient[i][4] =result.getString(6);
+		        	patient[i][5] =result.getString(7);
+		        	patient[i][6] =result.getString(8);
 		        	
 		        }
 
@@ -1099,8 +1531,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1120,21 +1552,21 @@ public class Database {
 			int row = 0;
 			
 			
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL PatientCount()");
+				procedure = connection.prepareCall("CALL PatientCount()");
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 				
-				if(rs.next()) {
-			        row = Integer.parseInt(rs.getString(1));
+				if(result.next()) {
+			        row = Integer.parseInt(result.getString(1));
 			        }
 				
 				
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1147,23 +1579,23 @@ public class Database {
 		public int getPhysicianCount() {
 			int row = 0;
 			
-		   CallableStatement stmt;
+		   CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL PhysicianCount()");
+				procedure = connection.prepareCall("CALL PhysicianCount()");
 			
 				
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 				
-				if(rs.next()) {
-			        row = Integer.parseInt(rs.getString(1));
+				if(result.next()) {
+			        row = Integer.parseInt(result.getString(1));
 			        }
 				
 				
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1176,23 +1608,23 @@ public class Database {
 		public int getNurseCount() {
 			int row = 0;
 			
-		   CallableStatement stmt;
+		   CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL NurseCount()");
+				procedure = connection.prepareCall("CALL NurseCount()");
 			
 				
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 				
-				if(rs.next()) {
-			        row = Integer.parseInt(rs.getString(1));
+				if(result.next()) {
+			        row = Integer.parseInt(result.getString(1));
 			        }
 				
 				
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1202,28 +1634,56 @@ public class Database {
 			return row;
 		}	
 		
+		public int getPrescriptionCount() {
+			int row = 0;
+			
+			
+			  CallableStatement procedure;
+			try {
+				procedure = connection.prepareCall("CALL GetPrescriptionCount()");
+
+				ResultSet result = procedure.executeQuery();
+				
+				if(result.next()) {
+			        row = Integer.parseInt(result.getString(1));
+			        }
+				
+				
+
+		        
+		        result.close();
+		        procedure.close();
+		      
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		        
+			return row;
+		}
+		
 		
 		
 		public int getPrescriptionCount(int id) {
 			int row = 0;
 			
 			
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL PrescriptionCount(?)");
-				stmt.setInt(1, id);
+				procedure = connection.prepareCall("CALL PrescriptionCount(?)");
+				procedure.setInt(1, id);
 								
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 				
-				if(rs.next()) {
-			        row = Integer.parseInt(rs.getString(1));
+				if(result.next()) {
+			        row = Integer.parseInt(result.getString(1));
 			        }
 				
 				
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1240,30 +1700,30 @@ public class Database {
 			
 			int row = getADTCount(id);
 			String[][] adt = null; 
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
 				
-				stmt = conn.prepareCall("CALL GetADT(?)");
+				procedure = connection.prepareCall("CALL GetADT(?)");
 			
 
-				stmt.setInt(1, id);
+				procedure.setInt(1, id);
 			
-				stmt.execute();
+				procedure.execute();
 				
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 		        
 				
 				adt = new String[row][7];
 				for(int i=0; i < row; i++) {
-		        if(rs.next()) {
-		        	adt[i][0] = rs.getString(1);
-		        	adt[i][1] =rs.getString(2);
-		        	adt[i][2] =rs.getString(3);
-		        	adt[i][3] = rs.getString(4);
-		        	adt[i][4] =rs.getString(5);
-		        	adt[i][5] =rs.getString(6);
-		        	adt[i][6] =rs.getString(7);
+		        if(result.next()) {
+		        	adt[i][0] = result.getString(1);
+		        	adt[i][1] =result.getString(2);
+		        	adt[i][2] =result.getString(3);
+		        	adt[i][3] = result.getString(4);
+		        	adt[i][4] =result.getString(5);
+		        	adt[i][5] =result.getString(6);
+		        	adt[i][6] =result.getString(7);
 
 		        	
 		        }
@@ -1272,8 +1732,8 @@ public class Database {
 			
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1287,23 +1747,23 @@ public class Database {
 			int row = 0;
 			
 			
-			 CallableStatement stmt;
+			 CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL ADTCount(?)");
-				stmt.setInt(1, id);
+				procedure = connection.prepareCall("CALL ADTCount(?)");
+				procedure.setInt(1, id);
 
 				
-				ResultSet rs = stmt.executeQuery();
+				ResultSet result = procedure.executeQuery();
 				
-				if(rs.next()) {
-			        row = Integer.parseInt(rs.getString(1));
+				if(result.next()) {
+			        row = Integer.parseInt(result.getString(1));
 			        }
 				
 				
 
 		        
-		        rs.close();
-		        stmt.close();
+		        result.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1317,17 +1777,17 @@ public class Database {
 			
 			 
 		
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL DeletePhysician(?)");
-				stmt.setInt(1, id);
-				stmt.execute();
+				procedure = connection.prepareCall("CALL DeletePhysician(?)");
+				procedure.setInt(1, id);
+				procedure.execute();
 			
 
 			
 
 		        
-		        stmt.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1342,17 +1802,16 @@ public class Database {
 			
 			 
 			
-			  CallableStatement stmt;
+			  CallableStatement procedure;
 			try {
-				stmt = conn.prepareCall("CALL DeleteNurse(?)");
-				stmt.setInt(1, id);
-				stmt.execute();
+				procedure = connection.prepareCall("CALL DeleteNurse(?)");
+				procedure.setInt(1, id);
+				procedure.execute();
 			
 
 			
 
-		        
-		        stmt.close();
+		        procedure.close();
 		      
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
