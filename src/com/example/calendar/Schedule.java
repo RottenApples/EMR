@@ -73,7 +73,7 @@ public class Schedule implements ActionListener {
 		Border border = BorderFactory.createLineBorder(Color.BLACK);
 		Border border2 = BorderFactory.createLineBorder(Color.BLACK);
 
-		
+		//Initializing components
 		field = new JTextField();
 		frame2 = new JFrame();
 		frame2.setLayout(null);
@@ -101,7 +101,7 @@ public class Schedule implements ActionListener {
 		show = new JButton("Show");
 		createApp = new JButton("Create Appointment");
 		
-		
+		//Setting bounds
 		createApp.setBounds(30, 300, 180, 20);
 		currentBox.setBounds(30, 350, 180, 20);
 		show.setBounds(220, 350, 80, 20);
@@ -111,11 +111,21 @@ public class Schedule implements ActionListener {
 		categoryLabel.setBounds(200,70,100,20);
 		physicianLabel.setBounds(200,90,100,20);
 		remove.setBounds(350,130,100,20);
+		panelPop.setBounds(0,0,500,200);
+		startLabel.setBounds(200,10,100,20);
+		startBox.setBounds(200,30,100,20);
+		endLabel.setBounds(350,10,100,20);
+		confirm.setBounds(350,90,100,20);
+		endBox.setBounds(350,30,100,20);
+		patientLabel.setBounds(30,70,100,20);
+		physicianLabel2.setBounds(200,70,100,20);
+		appointmentLabel.setBounds(30,10,100,20);
+		categoryBox.setBounds(30,30,120,20);
 		remove.addActionListener(this);
 		show.addActionListener(this);
 
 		
-		
+		//Adding components to panels
 		panelPop2 = new JPanel();
 		panelPop2.add(nameLabel);
 		panelPop2.add(startTimeLabel);
@@ -123,13 +133,9 @@ public class Schedule implements ActionListener {
 		panelPop2.add(categoryLabel);
 		panelPop2.add(physicianLabel);
 		panelPop2.add(remove);
-
 		panelPop2.setBounds(0,0,500,200);
 		panelPop2.setLayout(null);
 		frame3.add(panelPop2);
-		
-		
-		
 		panelPop.add(patientLabel);
 		panelPop.add(appointmentLabel);
 		panelPop.add(physicianLabel2);
@@ -139,17 +145,9 @@ public class Schedule implements ActionListener {
 		panelPop.add(endLabel);
 		panelPop.add(endBox);
 		panelPop.add(confirm);
-		panelPop.setBounds(0,0,500,200);
-		startLabel.setBounds(200,10,100,20);
-		startBox.setBounds(200,30,100,20);
-		endLabel.setBounds(350,10,100,20);
-		confirm.setBounds(350,90,100,20);
+		
+		
 
-		endBox.setBounds(350,30,100,20);
-		patientLabel.setBounds(30,70,100,20);
-		physicianLabel2.setBounds(200,70,100,20);
-		appointmentLabel.setBounds(30,10,100,20);
-		categoryBox.setBounds(30,30,120,20);
 		panelPop.setLayout(null);
 		frame2.add(panelPop);
 		
@@ -182,7 +180,7 @@ public class Schedule implements ActionListener {
 		scroll.setBounds(30,50,650,500);
 		
 
-		
+		//Initializing the calendar buttons
 		dates = new JButton[31];
 		box = new JComboBox(months);
 		box.setBounds(100,40,160,30);
@@ -196,7 +194,7 @@ public class Schedule implements ActionListener {
 		
 		
 		
-		
+		//Setting the format of the calendar buttons
 		int multx = 0;
 		int multy = 0;
 		for(int i = 0; i< 31; i++ ) {
@@ -219,6 +217,9 @@ public class Schedule implements ActionListener {
 			panel.add(dates[i]);
 			dates[i].addActionListener(this);
 		}
+		
+		
+		//Selecting the current day
 		dates[calendar.DAY_OF_MONTH].doClick();
 		
 		box.addActionListener(this);
@@ -234,6 +235,8 @@ public class Schedule implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		
 		for(int i = 0; i<31; i++) {
+			
+			//Refresh when a new date is selected
 			if(e.getSource() == dates[i]) {
 			
 				
@@ -245,6 +248,8 @@ public class Schedule implements ActionListener {
 			
 		}
 		
+		
+		//Show the details of the appointment
 		if(e.getSource() == show) {
 		
 			nameLabel.setText((String)currentBox.getSelectedItem());
@@ -266,6 +271,8 @@ public class Schedule implements ActionListener {
 				String startTime, endTime;
 				
 				
+				
+				//Parsing the timestamps
 				if(Integer.parseInt(appStart[1].substring(0, 2)) < 10) {
 					
 					startTime = appStart[1].substring(1, 5)+"am";	
@@ -276,9 +283,7 @@ public class Schedule implements ActionListener {
 					}else {startTime = startTime +"pm";}
 
 				}
-				
-			
-				
+					
 				
 				if(Integer.parseInt(appEnd[1].substring(0, 2)) < 10) {
 					
@@ -291,9 +296,10 @@ public class Schedule implements ActionListener {
 
 				}
 				
+				//Setting the start and end time labels
 				startTimeLabel.setText(startTime +" -");
-
 				endTimeLabel.setText(endTime);
+				
 				categoryLabel.setText(appoint[i][5]);
 				
 				String nameResult2[] = database.getPhysicianName(Integer.parseInt(appoint[i][4]));
@@ -320,6 +326,7 @@ public class Schedule implements ActionListener {
 		
 		}
 		
+		//Create an appointment
 		if(e.getSource() == confirm) {
 			start = startBox.getSelectedIndex();
 			end = endBox.getSelectedIndex();
@@ -337,6 +344,7 @@ public class Schedule implements ActionListener {
 				month = "0" +month;
 			}
 			
+			//Creating the starting and ending timestamps
 			String timestamp1 = "2020-"+month+"-"+(selDate)+" "; 
 			String timestamp2 = "2020-"+month+"-"+(selDate)+" ";
 			
@@ -359,10 +367,14 @@ public class Schedule implements ActionListener {
 			att[0] = timestamp1 + a+ ":00";
 			att[1] = timestamp2 + b+ ":00";
 		
+			
+		//Getting the selected patient	
 		String temp =	(String)patientBox.getSelectedItem();
 		String temp2[] = temp.split(" ");
 			att[2] = temp2[0];
 			
+			
+			//Getting the selected physican
 			 	temp =	(String)physicianBox.getSelectedItem();
 			 	temp2 = temp.split(" ");
 				att[3] = temp2[0];
@@ -374,11 +386,14 @@ public class Schedule implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Invalid Format.");
 			}else {
 
+			//Creating a new appointment	
 			database.App(att);
 			refresh(selDate-1);
 			}
 			}
 		
+		
+		//Format the dates buttons according to the selected month 
 		if(e.getSource() == box) {
 			
 			int max = 31;
@@ -417,7 +432,7 @@ public class Schedule implements ActionListener {
 		
 		
 		
-		
+		//Remove a scheduled appointment
 		if(e.getSource() == remove) {
 			
 			database.removeApp(appID);
@@ -430,7 +445,7 @@ public class Schedule implements ActionListener {
 		
 		
 	
-		
+	
 		if(e.getSource() == createApp) {
 			
 			frame2.setVisible(true);
@@ -447,7 +462,10 @@ public class Schedule implements ActionListener {
 
 
 	
-	
+	/**
+	 * Set the patient selection box with all available patients
+	 * @param patients List of patients
+	 */
 	public void setPatient(String[][] patients) {
 		
 		this.patients = patients;
@@ -465,7 +483,10 @@ public class Schedule implements ActionListener {
 	}
 	
 	
-	
+	/**
+	 * Set the patient selection box with all available physicians
+	 * @param patients List physicians
+	 */
 	public void setPhysician(String[][] physicians) {
 		
 		this.physicians = physicians;
@@ -483,13 +504,15 @@ public class Schedule implements ActionListener {
 	}
 	
 	
-	
+	/**
+	 * Setting the appointments on the table according to a specific date
+	 * @param i The index of the selected date 
+	 */
 	public void refresh(int i) {
 		currentBox.removeAllItems();
 		label.setText(box.getSelectedItem() +" "+ dates[i].getName()+", 2020");
 		
 		selDate = Integer.parseInt(dates[i].getName());
-		System.out.println(selDate);
 		String date = dates[i].getName();
 		String month =  String.valueOf((box.getSelectedIndex()+1));
 		if(box.getSelectedIndex()+1 < 10) {
@@ -501,22 +524,25 @@ public class Schedule implements ActionListener {
 		String timestamp2 = "2020-"+month+"-"+date+" "+"23:59:59";
 		
 		  
-		
+		//Get the appointments for a given date
 		appoint =database.getApp(timestamp1, timestamp2);
 		
+		//Clearing the table
 		for(int j =0; j<26; j++) {
 			table.setValueAt(" ", j, 1);
 		}
 		
-		for(int j =0; j < appoint.length; j++) {
-			
+		
+		
+		//Setting the appointments to the table
+		for(int j =0; j < appoint.length; j++) {	
 			
 		String appStart[]=appoint[j][1].split(" ");
 		String appEnd[]=appoint[j][2].split(" ");
 		
 		
 	
-		
+		//Parsing the timestamps
 		if(Integer.parseInt(appStart[1].substring(0, 2)) < 10) {
 			
 			time1 = appStart[1].substring(1, 5);	
@@ -557,7 +583,10 @@ public class Schedule implements ActionListener {
 	
 	
 	
-	
+	/**
+	 * Getting the table and calendar panel
+	 * @return Table and calendar panel
+	 */
 	public Object[] getPanels() {
 		Object[] temp = new Object[2];
 		

@@ -142,10 +142,11 @@ public class GUI implements ActionListener{
 		backButton = new JButton[8];
 
 
-		//Initialize GUI
+		//Initializing Frames
 		frame = new JFrame();
 		frame2 = new JFrame();
 		frame4 = new JFrame();
+		
 		infoPanel = new JPanel();
 		statusDisplay = new JPanel();
 		testPanel = new JPanel();
@@ -157,7 +158,7 @@ public class GUI implements ActionListener{
 
 
 
-
+		//Initializing menu bar components
 		menuBar = new JMenuBar();
 		menuFile = new JMenu("File");
 		menuView = new JMenu("View");
@@ -181,7 +182,6 @@ public class GUI implements ActionListener{
 
 
 
-		sex = new JComboBox(sexList);
 
 		staffPanel = new JPanel();
 		staffPanel.setVisible(false);
@@ -224,10 +224,12 @@ public class GUI implements ActionListener{
 		/*
 		 * ****************************************Calendar***************************************
 		 */
+		//Initilizing the schedule
 		Schedule calendar = new Schedule(db);
 		calendar.setPatient(db.getPatient());
 		calendar.setPhysician(db.getPhysician());
 
+		//Getting the schedule panels
 		Object[] panels = calendar.getPanels();
 		schedule = (JPanel) panels[0];
 		schedule2 = (JScrollPane) panels[1];
@@ -242,11 +244,13 @@ public class GUI implements ActionListener{
 
 
 		/*
-		 *****************************Info Panel*********************************************		
+		 *****************************Create Patient Panel*********************************************		
 		 */
 		backButton[2] = new JButton("<");
 		backButton[2].setBounds(10,10,45,30);
 		backButton[2].addActionListener(this);
+		
+		//Initializing Components
 		firstName = new JTextField();
 		lastName = new JTextField();
 		ohip = new JTextField();
@@ -261,8 +265,10 @@ public class GUI implements ActionListener{
 		bloodType = new JComboBox(bloodTypes);
 		bloodType.setSelectedIndex(-1);
 		bloodLabel = new JLabel("Blood Type");
+		sex = new JComboBox(sexList);
 
 
+		//Initializing labels
 		firstLabel = new JLabel("First Name");
 		lastLabel = new JLabel("Last Name");
 		sexLabel = new JLabel("Sex");
@@ -282,7 +288,7 @@ public class GUI implements ActionListener{
 		reasonLabel = new JLabel("Reason: ");
 
 
-		//Set Bounds
+		//Setting Bounds
 		firstLabel.setBounds(30, 50, 70, 20);
 		firstName.setBounds(30, 70, 160, 20);
 		lastLabel.setBounds(250, 50, 70, 20);
@@ -314,7 +320,7 @@ public class GUI implements ActionListener{
 		unit.setBounds(30, 330, 160, 20);
 
 
-		//Adding components	
+		//Adding components to the frame	
 		infoPanel.add(backButton[2]);
 		infoPanel.add(sexLabel);
 		infoPanel.add(sex);
@@ -360,19 +366,25 @@ public class GUI implements ActionListener{
 
 
 		/*
-		 **********************Staff Panel********************************
+		 **********************Create Staff Panel********************************
 		 */
 		backButton[3] = new JButton("<");
 		backButton[3].setBounds(10,10,45,30);
 		backButton[3].addActionListener(this);
+		
+		//Initializing components
 		createStaff = new JButton("Create Staff");
 		createStaff.setBounds(30,200,120,30);
 		staffPanel.setBounds(0,30,1200,650);
 		staff = new JComboBox(staffList);
 		staff.setSelectedIndex(-1);
 		staffLabel = new JLabel("Staff");
+		
+		//Setting Bounds
 		staffLabel.setBounds(30, 120, 80, 20);
 		staff.setBounds(30, 140, 80, 20);
+		
+		//Adding components to the panel
 		staffPanel.add(staffLabel);
 		staffPanel.add(staff);
 		staffPanel.add(createStaff);
@@ -385,21 +397,15 @@ public class GUI implements ActionListener{
 
 
 		/*
-		 **********************Prescription Panel****************************		
+		 **********************Create Prescription Panel****************************		
 		 */
 
 		backButton[4] = new JButton("<");
 		backButton[4].setBounds(10,10,45,30);
 		backButton[4].addActionListener(this);
-		createPrescription = new JButton("Create Prescription");
-		preName = new JTextField();
 
-		physicianFirst = new JTextField();
-		physicianLast = new JTextField();
-		preRefill = new JTextField();
-		preDirect = new JTextField();
-		preDosage = new JTextField();
-
+		
+		//Getting the patient and physician names
 		String[][] tempPatient;
 		tempPatient = db.getPatient();
 		String name[] = new String[tempPatient.length];
@@ -422,11 +428,16 @@ public class GUI implements ActionListener{
 
 
 
-
+		//Initializing components
+		createPrescription = new JButton("Create Prescription");
+		preName = new JTextField();
+		physicianFirst = new JTextField();
+		physicianLast = new JTextField();
+		preRefill = new JTextField();
+		preDirect = new JTextField();
+		preDosage = new JTextField();
 		patient = new JComboBox(name);
 		staffName = new JComboBox(name2);
-
-
 		preNameLabel = new JLabel("Prescription Name");
 		preDosageLabel = new JLabel("Dosage: ");
 		patientNameLabel = new JLabel("Patient Name: ");
@@ -434,11 +445,11 @@ public class GUI implements ActionListener{
 		preRefillLabel = new JLabel("Refills: ");
 		preDirectLabel = new JLabel("Directions: ");
 
+		//Setting bounds
 		preNameLabel.setBounds(30, 50, 160, 20);
 		preName.setBounds(30, 70, 160, 20);
 		preDosageLabel.setBounds(250, 50, 70, 20);
 		preDosage.setBounds(250, 70, 160, 20);
-
 		preRefillLabel.setBounds(250,100, 150, 20);
 		preRefill.setBounds(250, 120, 160, 20);
 		preDirectLabel.setBounds(30,100, 150, 20);
@@ -447,14 +458,13 @@ public class GUI implements ActionListener{
 		patient.setBounds(30,180,150,20);
 		physicianNameLabel.setBounds(250,150,150,30);
 		staffName.setBounds(250,180,150,20);
-
 		createPrescription.setBounds(30,220,150,30);
 
+		//Adding components to the panel
 		prescriptionPanel.add(preName); 
 		prescriptionPanel.add(preDosage); 
 		prescriptionPanel.add(preRefill);
 		prescriptionPanel.add(preDirect);
-
 		prescriptionPanel.add(preNameLabel);
 		prescriptionPanel.add(preDosageLabel); 
 		prescriptionPanel.add(preDosage);
@@ -470,7 +480,7 @@ public class GUI implements ActionListener{
 
 
 		/*
-		 **********************Procedure Panel****************************		
+		 **********************Create Procedure Panel****************************		
 		 */
 		backButton[6] = new JButton("<");
 		backButton[6].setBounds(10,10,45,30);
@@ -479,25 +489,23 @@ public class GUI implements ActionListener{
 		
 		procedurePanel = new JPanel();
 		procedurePanel.setLayout(null);
+
+		//Initialzing components
 		createProcedure = new JButton("Create");
-		
 		patient3 = new JComboBox(name);
 		physician3 = new JComboBox(name2);
-
-
-		
-		
-		
-		
 		cardiacPanel2 = new JPanel();
 		nicuPanel2 = new JPanel();
 		oncologyPanel2 = new JPanel();
 		orthopedicPanel2 = new JPanel();
 		
+		//Getting the length of the procedure arrays
 		int length2_1 =  proc1.length;
 		int length2_2 = proc2.length;
 		int length2_3 = proc3.length;
 		int length2_4 = proc4.length;
+		
+		//Initializing the procedure checkboxes
 		cardiacBox2 = new JCheckBox[length2_1];
 		nicuBox2 = new JCheckBox[length2_2];
 		oncologyBox2 = new JCheckBox[length2_3];
@@ -505,6 +513,7 @@ public class GUI implements ActionListener{
 
 
 
+		//Creating the check boxes
 		for(int i =0; i<4; i++) {
 			if(i == 0) {
 				
@@ -550,6 +559,7 @@ public class GUI implements ActionListener{
 		TitledBorder border8 = new TitledBorder("Oncology");
 		TitledBorder border9 = new TitledBorder("Orthopedic");
 
+		//Creating the scroll panels
 		scrollFilter2_1 = new JScrollPane(cardiacPanel2,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollFilter2_1.setBounds(70,0,300,300);
 		cardiacPanel2.setPreferredSize(new Dimension(50,400));
@@ -571,7 +581,7 @@ public class GUI implements ActionListener{
 		scrollFilter2_4.setBorder(border9);
 		
 		
-		
+		//Adding components to the panel
 		procedurePanel.add(scrollFilter2_1);
 		procedurePanel.add(scrollFilter2_2);
 		procedurePanel.add(scrollFilter2_3);
@@ -583,17 +593,15 @@ public class GUI implements ActionListener{
 		physicianNameLabel3 = new JLabel("Physician Name: ");
 
 
-	
+		//Setting the bounds
 		patientNameLabel3.setBounds(700,160, 150, 20);
 		patient3.setBounds(700,180,150,20);
-
 		physicianNameLabel3.setBounds(900,160,150,20);
 		physician3.setBounds(900,180,150,20);
-
 		createProcedure.setBounds(750,220,150,30);
 
 		
-		
+		//Adding components to the panel
 		procedurePanel.add(patient3);
 		procedurePanel.add(physician3);
 		procedurePanel.add(patientNameLabel3);
@@ -614,17 +622,15 @@ public class GUI implements ActionListener{
 		backButton[5].addActionListener(this);
 		createBloodTest = new JButton("Create Blood Test");
 		createBloodTest.addActionListener(this);
+		
+		
+		//Initializing components
 		wbc = new JTextField();
 		rbc = new JTextField();
 		hgb = new JTextField();
 		hct = new JTextField();
 		platelet = new JTextField();
-
-
-
 		patient2 = new JComboBox(name);
-
-
 		wbcLabel = new JLabel("WBC (cu.mm): ");
 		rbcLabel = new JLabel("RBC (cu.mm): ");
 		hgbLabel = new JLabel("HGB (g): ");
@@ -632,17 +638,14 @@ public class GUI implements ActionListener{
 		plateletLabel = new JLabel("Platelets (cu.mm): ");
 		patientNameLabel2 = new JLabel("Patient: ");
 
-
+		//Setting bounds
 		createBloodTest.setBounds(30,220,150,30);
-
-
 		wbcLabel.setBounds(30, 50, 160, 20);
 		wbc.setBounds(30, 70, 160, 20);
 		rbcLabel.setBounds(30,100, 150, 20);
 		rbc.setBounds(30, 120, 160, 20);
 		hgbLabel.setBounds(250, 50, 70, 20);
 		hgb.setBounds(250, 70, 160, 20);
-
 		hctLabel.setBounds(250,100, 150, 20);
 		hct.setBounds(250, 120, 160, 20);
 		plateletLabel.setBounds(450,100, 150, 20);
@@ -654,11 +657,12 @@ public class GUI implements ActionListener{
 		bloodTestPanel = new JPanel();
 		bloodTestPanel.setLayout(null);
 		bloodTestPanel.setVisible(false);
+		
+		//Adding components to the panel
 		bloodTestPanel.add(wbc); 
 		bloodTestPanel.add(rbc); 
 		bloodTestPanel.add(hgb);
 		bloodTestPanel.add(hct);
-
 		bloodTestPanel.add(wbcLabel);
 		bloodTestPanel.add(rbcLabel); 
 		bloodTestPanel.add(hgbLabel);
@@ -1585,7 +1589,7 @@ public class GUI implements ActionListener{
 		
 		
 		if(e.getSource() == createPatient) {
-			//height fix
+		
 
 			try {
 				String result[] = new String[13];
@@ -2301,14 +2305,18 @@ public class GUI implements ActionListener{
 
 
 
+	/**
+	 * Draws the list of patients to the patient list panel.
+	 * This method is also used to draw patients if a procedure filter has been selected. 
+	 */
 	public void drawListPatient() {
 		for(int j =0; j < 17; j++) {
 			listPatientPanel[j].removeAll();
 
 
-
+			//Getting the number of patients in a given ward
 			rowPatient = db.getLocationPatientCount(j+1);
-
+			//Getting the patients from that ward
 			locationPatient= db.getLocationPatient(j+1);
 	
 			JSeparator[] split = new JSeparator[rowPatient];
@@ -2317,11 +2325,14 @@ public class GUI implements ActionListener{
 
 
 			for(int i =0; i<rowPatient; i++) {
+				//If statement to verify if a procedure has been chosen to filter the list
 				if(filterValue == "") {
 				
 				split[i] = new JSeparator();
 
 				split[i].setOrientation(SwingConstants.HORIZONTAL); 
+				
+				//Getting patient demographics and patient name for a given location
 				resultDemographics = db.getPatientDemographic(Integer.parseInt(locationPatient[i][0]));
 				patients = db.getName(Integer.parseInt(locationPatient[i][0]));
 
@@ -2330,10 +2341,13 @@ public class GUI implements ActionListener{
 				detailPatient[j][i] = new JButton("Details");
 				adtPatient[j][i] = new JButton("ADT");
 
+				//Creating a label based on the information obtained from getPatientDemographic and getName
 				listLabels[i] = new JLabel("<html>"+patients[0] + " " + patients[1] + " <br/>OHIP: " 
 						+resultDemographics[1] +" <br/>Date of Birth: "+resultDemographics[2] +" <br/>Sex: "+resultDemographics[3] +" <br/>Height: "+resultDemographics[4] +" <br/>Weight: "+resultDemographics[5] +" <br/>Blood Type: "+resultDemographics[6] 
 								+" <br/>Address: " +resultDemographics[7]+"</html>");
 
+				
+				//Display formating
 				if(i == 1) {
 					listLabels[i].setBounds(30,180,1200,150);
 					deletePatient[j][i].setBounds(1000,320,80,20);
@@ -2365,13 +2379,19 @@ public class GUI implements ActionListener{
 				listPatientPanel[j].add(adtPatient[j][i]);
 
 				listPatientPanel[j].add(split[i]);
+				
+				//Else their is a filter value chosen
 				}else {
+					//If the patients procedure attribute is null then give the attribute an empty string
 					if(locationPatient[i][3] == null) {locationPatient[i][3] = "";}
+					
+					//If the patients procedure attribute equals the selected procedure filter then draw the patient to the list
 					if(locationPatient[i][3].equals(filterValue)){
 					
 					split[i] = new JSeparator();
-
 					split[i].setOrientation(SwingConstants.HORIZONTAL); 
+					
+					//Getting patient demographics and patient name for a given location
 					resultDemographics = db.getPatientDemographic(Integer.parseInt(locationPatient[i][0]));
 					patients = db.getName(Integer.parseInt(locationPatient[i][0]));
 
@@ -2380,6 +2400,7 @@ public class GUI implements ActionListener{
 					detailPatient[j][i] = new JButton("Details");
 					adtPatient[j][i] = new JButton("ADT");
 
+					//Creating a label based on the information obtained from getPatientDemographic and getName
 					listLabels[i] = new JLabel("<html>"+patients[0] + " " + patients[1] + " <br/>OHIP: " 
 							+resultDemographics[1] +" <br/>Date of Birth: "+resultDemographics[2] +" <br/>Sex: "+resultDemographics[3] +" <br/>Height: "+resultDemographics[4] +" <br/>Weight: "+resultDemographics[5] +" <br/>Blood Type: "+resultDemographics[6] 
 									+" <br/>Address: " +resultDemographics[7]+"</html>");
@@ -2427,24 +2448,31 @@ public class GUI implements ActionListener{
 	}
 
 
-
+	/**
+	 * Draws the list of staff members to the staff list panel.
+	 */
 	public void drawListStaff() {
 
 		for(int j =0; j < 2; j++) {
 			listStaffPanel[j].removeAll();
 
 
+			//If the tab is the nurse tab then get nurse info
 			if(j==0) {
+				//Get the number of nurses
 				rowStaff = db.getNurseCount();
 
+				//Get all the nurses
 				resultStaff= db.getNurse();	
 
 			}
 
+			//If the tab is the physician tab then get the physician info
 			if(j==1) {
 
+				//Get the number physicians
 				rowStaff = db.getPhysicianCount();
-
+				//Get all physicians
 				resultStaff= db.getPhysician();
 			}
 
@@ -2454,6 +2482,7 @@ public class GUI implements ActionListener{
 			listStaffLabel = new JLabel[rowStaff];
 
 
+			//List formating 
 			for(int i =0; i<rowStaff; i++) {
 				split[i] = new JSeparator();
 
@@ -2493,15 +2522,19 @@ public class GUI implements ActionListener{
 			listStaffPanel[j].repaint();
 		}
 	}
-	
+
+	/**
+	 * Draws the list of all prescriptions to the prescription list panel.
+	 */
 	public void drawListPrescription() {
 
 			listPrescriptionPanel.removeAll();
 
 
-
+			//Get the number of prescriptions
 			rowPrescription2 = db.getPrescriptionCount();
 
+			//Get all prescriptions
 			prescription2= db.getAllPrescriptions();
 	
 			JSeparator[] split = new JSeparator[rowPrescription2];
@@ -2509,9 +2542,8 @@ public class GUI implements ActionListener{
 			listPrescriptionLabel2 = new JLabel[rowPrescription2];
 
 
+			//List formating
 			for(int i =0; i<rowPrescription2; i++) {
-				
-				
 				split[i] = new JSeparator();
 
 				split[i].setOrientation(SwingConstants.HORIZONTAL); 
@@ -2558,19 +2590,22 @@ public class GUI implements ActionListener{
 	
 	
 	
-
-
+	/**
+	 * Draws the patient blood test to the patient blood test panel.
+	 * @param id Patient ID
+	 */
 	public void drawBloodTest(int id) {
-
-		rowBlood = db.getBloodCount(id);
-
 		listBloodPanel.removeAll();
+
+		//Get the number of blood test for a given patient
+		rowBlood = db.getBloodCount(id);
+		//Get the the blood test of a given patient
 		resultBlood= db.getBloodTest(id);
 
 
 		listBloodLabel = new JLabel[14];
 
-
+		//Drawing components to the panel
 		if(resultBlood.length != 0) {
 			listBloodLabel[0] = new JLabel("WBC");
 			listBloodLabel[1] = new JLabel("RBC");
@@ -2632,19 +2667,22 @@ public class GUI implements ActionListener{
 	
 	
 	
-	
-	
+	/**
+	 * Draws the patient urine test to the patient urine test panel.
+	 * @param id Patient ID
+	 */
 	public void drawUrineTest(int id) {
 		listUrinePanel.removeAll();
 
+		//Getting the number of tests for a give patient
 		rowAnalysis = db.getUrineCount(id);
-
+		//Getting the tests for a given patient
 		resultAnalysis= db.getUrineTest(id);
 
 
 		listUrineLabel = new JLabel[24];
 
-
+		//Drawing the results to the panel
 		if(resultAnalysis.length != 0) {
 			listUrineLabel[0] = new JLabel("pH");
 			listUrineLabel[1] = new JLabel("Specific Gravity");
@@ -2736,7 +2774,7 @@ public class GUI implements ActionListener{
 	
 	
 
-	/*
+	/**
 	 * checkInfo - Verifies that the contents in the info Panel follow the proper structure
 	 * @return boolean - Variable to output result
 	 */
@@ -2849,6 +2887,10 @@ public class GUI implements ActionListener{
 	}
 
 
+	/**
+	 * checkStaffInfo - Verifies that the contents in the Staff Panel follow the proper structure
+	 * @return boolean - Variable to output result
+	 */
 	public boolean checkStaffInfo() {
 		String param[] = new String[2];
 
@@ -2869,6 +2911,10 @@ public class GUI implements ActionListener{
 	}
 
 
+	/**
+	 * checkPrescriptionInfo - Verifies that the contents in the Prescription Panel follow the proper structure
+	 * @return boolean - Variable to output result
+	 */
 	public boolean checkPrescriptionInfo() {
 
 		if(patient.getSelectedIndex() == -1 || staffName.getSelectedIndex() == -1) {
@@ -2910,6 +2956,10 @@ public class GUI implements ActionListener{
 		return true;
 	}
 
+	/**
+	 * checkBloodInfo - Verifies that the contents in the Blood Test Panel follow the proper structure
+	 * @return boolean - Variable to output result
+	 */
 	public boolean checkBloodInfo() {
 		String result[] = new String[5];
 
@@ -2929,7 +2979,10 @@ public class GUI implements ActionListener{
 		return true;
 	}
 
-
+	/**
+	 * checkUrineInfo - Verifies that the contents in the Urine Test Panel follow the proper structure
+	 * @return boolean - Variable to output result
+	 */
 	public boolean checkUrineInfo() {
 		String result[] = new String[10];
 
@@ -2954,20 +3007,23 @@ public class GUI implements ActionListener{
 		return true;
 	}
 	
-	
+	/**
+	 * search - Searches for the detail patient panel belonging to a patient ohip 
+	 * @return boolean - Variable to output result
+	 */
 	public void search() {
 		
 		String ohip = searchBar.getText();
-		System.out.println(ohip);
-		
 		
 		if(ohip.length() != 10) {
 
 			return;
 		}
 
+		//Getting the location of the patient based on the ohip number
 		int num = db.getSearchLocation(ohip);
 		
+		//Searching for patient in a given location
 		String[][] searchResult = db.getSearch(num);
 		int searchCount = db.getSearchCount(num);
 

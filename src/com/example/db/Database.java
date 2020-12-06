@@ -34,6 +34,11 @@ public class Database {
 		    }
 		  
 		}
+		
+		/**
+		 * Procedure for creating appointments
+		 * @param att appointment times, patient name, appointment type and physician name
+		 */
 		public void App(String att[]) {
 			
 
@@ -62,6 +67,10 @@ public class Database {
 			
 		}
 		
+		/**
+		 * Procedure for removing scheduled appointments
+		 * @param id Patient ID
+		 */
 		public void removeApp(int id) {
 			
 
@@ -89,7 +98,11 @@ public class Database {
 		
 		
 		
-		
+		/**
+		 * Procedure for getting patient demographics
+		 * @param id Patient ID
+		 * @return Resulting demographics
+		 */
 		public String[] getPatientDemographic(int id) {
 			String[] patient = null; 
 			  CallableStatement procedure;
@@ -136,7 +149,10 @@ public class Database {
 		
 		
 		
-
+		/**
+		 * Procedure call for creating patient procedures
+		 * @param att Procedure name, Patient name, Physician name 
+		 */
 		public void createProcedure(String att[]) {
 			
 			
@@ -162,15 +178,10 @@ public class Database {
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		/**
+		 * Procedure for creating blood tests
+		 * @param att Blood test details
+		 */
 		public void createBloodTest(String att[]) {
 			
 			
@@ -198,7 +209,10 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Procedure for creating urine tests
+		 * @param att Urine test details
+		 */
 		public void createUrineTest(String att[]) {
 			
 			
@@ -230,11 +244,11 @@ public class Database {
 		}
 		
 		
-		
-		
-		
-		
-		
+		/**
+		 * Procedure for retrieving blood test results for a given patient
+		 * @param id Patient ID
+		 * @return Blood Test details
+		 */
 		public String[][] getBloodTest(int id) {
 			int row = getBloodCount(id);
 				String[][] test = null; 
@@ -273,7 +287,11 @@ public class Database {
 			
 		}
 		
-		
+		/**
+		 * Procedure for retrieving the number of blood test for a patient
+		 * @param id patient id
+		 * @return number of blood tests
+		 */
 		public int getBloodCount(int id) {
 			  CallableStatement procedure;
 			  String result2 = "";
@@ -301,6 +319,11 @@ public class Database {
 			return Integer.parseInt(result2);
 		}
 		
+		/**
+		 * Searches for patients in a given location
+		 * @param id Location ID
+		 * @return Location ID, patient id, ohip number
+		 */
 		public String[][] getSearch(int id) {
 			int row = getSearchCount(id);
 			String[][] patient = null; 
@@ -343,6 +366,11 @@ public class Database {
 			
 		}
 		
+		/**
+		 * Number of search results for a given location
+		 * @param id Location ID
+		 * @return number of patients
+		 */
 		public int getSearchCount(int id) {
 			  CallableStatement procedure;
 			  String result2 = "";
@@ -378,6 +406,12 @@ public class Database {
 			return Integer.parseInt(result2);
 		}
 		
+		
+		/**
+		 * Searches for the location of the patient based on the ohip number
+		 * @param id Patient Ohip
+		 * @return Location ID
+		 */
 		public int getSearchLocation(String id) {
 			  CallableStatement procedure;
 			  String result2 = "";
@@ -412,6 +446,12 @@ public class Database {
 		        
 			return Integer.parseInt(result2);
 		}
+		
+		/**
+		 * Get all patients in a given location
+		 * @param id Location ID
+		 * @return list of patients
+		 */
 		public String[][] getLocationPatient(int id) {
 			int row = getLocationPatientCount(id);
 			String[][] patient = null; 
@@ -455,7 +495,11 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Number of patients in a given location
+		 * @param id Location id
+		 * @return number of patients
+		 */
 		public int getLocationPatientCount(int id) {
 			  CallableStatement procedure;
 			  String result2 = "";
@@ -491,6 +535,12 @@ public class Database {
 			return Integer.parseInt(result2);
 		}
 		
+		/**
+		 * Getting all the appointments scheduled for a given day
+		 * @param start Starting timestamp
+		 * @param end Ending timestamp
+		 * @return Appointments
+		 */
 		public String[][] getApp(String start, String end) {
 			String result2= AppCount(start, end);
 			int row = Integer.parseInt(result2);
@@ -532,7 +582,12 @@ public class Database {
 			return patient;
 		}
 	
-		
+		/**
+		 * Getting the number of appointments in a given day
+		 * @param start Starting timestamp
+		 * @param end Ending timestamp
+		 * @return Number of appointments
+		 */
 		public String AppCount(String start, String end) {
 			String count = "";
 			  CallableStatement procedure;
@@ -569,6 +624,11 @@ public class Database {
 			return count;
 		}
 		
+		/**
+		 * Getting the patient name
+		 * @param id Patient ID
+		 * @return Patient ID, first name, last name
+		 */
 		public String[] getName(int id){
 			
 			String[] patient = new String[2];
@@ -607,6 +667,11 @@ public class Database {
 		}
 		
 		
+		/**
+		 * Getting the name of the physician
+		 * @param id physician id
+		 * @return Physician ID, First name, last name
+		 */
 	public String[] getPhysicianName(int id){
 			
 			String[] physician = new String[2];
@@ -643,8 +708,10 @@ public class Database {
 		}
 		
 		
-		
-		
+		/**
+		 * Deletes the location entry for a given patient
+		 * @param id Patient ID
+		 */
 		public void deleteLocationPatient(int id) {
 			  CallableStatement procedure;
 			try {
@@ -664,13 +731,10 @@ public class Database {
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		
+		/**
+		 * Creates a patient
+		 * @param att patient demographics
+		 */
 		public void createPatient(String[] att) {
 		
 		
@@ -703,6 +767,11 @@ public class Database {
 			}			
 			
 		}
+		
+		/**
+		 * Creates the demographics entry for a patient
+		 * @param att patient demographics
+		 */
 		public void createDemographics(String att[]) {
 			CallableStatement procedure;
 			try {
@@ -729,7 +798,10 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Creates the adt entry for a patient
+		 * @param att ADT attributes
+		 */
 		public void createADT(String att[]){
 			/*
 			 * att[10] - adt 
@@ -812,6 +884,13 @@ public class Database {
 			}	
 			
 		}
+		
+		/**
+		 * Creates ADT entry for a given patient
+		 * @param PatientID Patient ID
+		 * @param adt adt status
+		 * @param unit the ward
+		 */
 		public void createADT(String PatientID, String adt, String unit){
 		
 			
@@ -881,6 +960,11 @@ public class Database {
 			
 		}
 		
+		/**
+		 * Creates the location patient entry for a given patient
+		 * @param patientID Patient ID
+		 * @param locationID Location ID
+		 */
 		public void createLocationPatient(String patientID, String locationID){
 			CallableStatement procedure;
 
@@ -903,6 +987,11 @@ public class Database {
 			
 		}
 		
+		/**
+		 * Updates the location of the patient
+		 * @param patientID
+		 * @param locationID
+		 */
 		public void UpdateLocation(String patientID, String locationID) {
 	
 	
@@ -929,14 +1018,11 @@ public class Database {
 			
 	
 		
-		
-		
+		/**
+		 * Creates a staff member
+		 * @param att First name, last name, staff member type
+		 */
 		public void createStaff(String[] att) {
-			/*
-			 att[0] - Staff First Name
-			 att[1] - Staff Last Name 
-			 att[2] - Nurse or Physician
-			*/
 	
 
 				try {
@@ -963,22 +1049,12 @@ public class Database {
 			
 		}
 		
+		/**
+		 * Creates a prescription entry
+		 * @param att Prescription name, dosage, number of refills, prescription directions, patient id, physician id
+		 */
 		public void createPrescription(String[] att) {
 			
-			
-			
-			/*
-			 Semifinal fields
-			 att[0] - prescription name 
-			 att[1] - dosage
-			 att[2] - number of refills
-			 att[3] - prescription direction
-			 att[4] - patient id
-			 att[5] - patient id
-			 */
-			
-			
-		  
 			CallableStatement procedure;
 			try {
 				procedure = connection.prepareCall("CALL CreatePrescription(?,?,?,?,?,?)");
@@ -999,6 +1075,11 @@ public class Database {
 			}			
 		}
 		
+		
+		/**
+		 * Deletes a patient
+		 * @param id Patient ID
+		 */
 		public void deletePatient(int id) {
 			
 			 deleteLocationPatient(id);
@@ -1020,6 +1101,11 @@ public class Database {
 			
 		}
 		
+		/**
+		 * Gets the location id for a given location
+		 * @param name Location Name
+		 * @return Location ID
+		 */
 		public String getLocationID(String name) {
 			String location = "";
 			  CallableStatement procedure;
@@ -1054,6 +1140,11 @@ public class Database {
 			return location;
 		}
 		
+		/**
+		 * Gets the location name for a given location
+		 * @param id Location ID
+		 * @return The name of the location
+		 */
 		public String getLocationName(int id) {
 			
 			String name = "";
@@ -1092,6 +1183,11 @@ public class Database {
 		
 		}
 		
+		/**
+		 * Gets the most up to date location of a given patient
+		 * @param id Patient ID
+		 * @return Location ID
+		 */
 		public String getLatestLocation(int id) {
 			String location = "";
 			  CallableStatement procedure;
@@ -1122,7 +1218,11 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Gets the total dosage of prescriptions administered to a patient
+		 * @param id patient id
+		 * @return sum of the dosages
+		 */
 		public String TotalDosage(int id) {
 			String sum = "";
 			  CallableStatement procedure;
@@ -1152,7 +1252,10 @@ public class Database {
 			
 		}
 		
-		
+		/**
+		 * Gets all the active patients in the hospital
+		 * @return List of all active patients
+		 */
 		public String[][] getPatient() {
 			int row = getPatientCount();
 			String[][] patient = null; 
@@ -1193,7 +1296,11 @@ public class Database {
 			return patient;
 		}
 
-		
+		/**
+		 * Gets all the active patients in a given ward
+		 * @param Location Location ID
+		 * @return List of patients
+		 */
 		public String[][] getPatient(int Location) {
 			int row = getPatientCount();
 			String[][] patient = null; 
@@ -1237,7 +1344,10 @@ public class Database {
 		
 	
 		
-		
+		/**
+		 * Get all the physicians in the hospital
+		 * @return List of all physicians
+		 */
 		public String[][] getPhysician() {
 			int row = getPhysicianCount();
 			String[][] staff = null; 
@@ -1278,6 +1388,10 @@ public class Database {
 			return staff;
 		}
 		
+		/**
+		 * Get all the nurses in a given hospital
+		 * @return List of all the nurses
+		 */
 		public String[][] getNurse() {
 			int row = getNurseCount();
 			String[][] staff = null; 
@@ -1319,7 +1433,11 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Get all the prescriptions for a given patient
+		 * @param id Patient ID
+		 * @return List of prescriptions
+		 */
 		public String[][] getPrescription(int id) {
 			int row = getPrescriptionCount(id);
 			String[][] prescription = null; 
@@ -1360,7 +1478,10 @@ public class Database {
 			return prescription;
 		}
 		
-		
+		/**
+		 * Get all prescriptions given in a hospital
+		 * @return List of prescriptions
+		 */
 		public String[][] getAllPrescriptions() {
 			int row = getPrescriptionCount();
 			String[][] prescription = null; 
@@ -1401,7 +1522,11 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Get the urine tests for a given patient
+		 * @param id Patient ID
+		 * @return list of urine tests for a patient
+		 */
 		public String[][] getUrineTest(int id) {
 			int row = getUrineCount(id);
 				String[][] test = null; 
@@ -1447,7 +1572,11 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Get the number of urine test for a given patient
+		 * @param id patient id
+		 * @return the number of tests
+		 */
 		public int getUrineCount(int id) {
 			  CallableStatement procedure;
 			  String result2 = "";
@@ -1476,7 +1605,10 @@ public class Database {
 			
 		}
 		
-		
+		/**
+		 * Delete a prescriptions
+		 * @param id Prescription ID
+		 */
 		public void deletePrescription(int id) {
 			
 			 deleteLocationPatient(id);
@@ -1501,7 +1633,10 @@ public class Database {
 		
 		
 		
-		
+		/**
+		 * Get all demographics for all patients
+		 * @return List of demographics for all patients
+		 */
 		public String[][] getDemographics() {
 			int row = getPatientCount();
 			String[][] patient = null; 
@@ -1547,7 +1682,10 @@ public class Database {
 		
 
 		
-		
+		/**
+		 * Get the number of patients in a hospital
+		 * @return Number of all patients
+		 */
 		public int getPatientCount() {
 			int row = 0;
 			
@@ -1576,6 +1714,10 @@ public class Database {
 			return row;
 		}
 		
+		/**
+		 * Get the number of physicians in a hospital
+		 * @return Number of physicians
+		 */
 		public int getPhysicianCount() {
 			int row = 0;
 			
@@ -1605,6 +1747,10 @@ public class Database {
 			return row;
 		}
 		
+		/**
+		 * Get the number of nurses in a hospital
+		 * @return Number of nurses
+		 */
 		public int getNurseCount() {
 			int row = 0;
 			
@@ -1634,6 +1780,10 @@ public class Database {
 			return row;
 		}	
 		
+		/**
+		 * Get the number of prescriptions given in a hospital
+		 * @return number of prescriptions
+		 */
 		public int getPrescriptionCount() {
 			int row = 0;
 			
@@ -1663,7 +1813,11 @@ public class Database {
 		}
 		
 		
-		
+		/**
+		 * Get the number of prescriptions given to a patient
+		 * @param id Patient ID
+		 * @return number of prescriptions
+		 */
 		public int getPrescriptionCount(int id) {
 			int row = 0;
 			
@@ -1695,7 +1849,11 @@ public class Database {
 		
 		
 		
-		
+		/**
+		 * Get the adt status list of for a given patient
+		 * @param id Patient ID
+		 * @return List of adt's
+		 */
 		public String[][] getADT(int id) {
 			
 			int row = getADTCount(id);
@@ -1743,6 +1901,11 @@ public class Database {
 			return adt;
 		}
 		
+		/**
+		 * Get the number of adt's for a given patient
+		 * @param id Patient ID
+		 * @return number of adt's
+		 */
 		public int getADTCount(int id) {
 			int row = 0;
 			
@@ -1773,6 +1936,10 @@ public class Database {
 			return row;
 		}
 		
+		/**
+		 * Delete Physician
+		 * @param id Physician ID
+		 */
 		public void deletePhysician(int id) {
 			
 			 
@@ -1797,7 +1964,10 @@ public class Database {
 
 		}
 		
-		
+		/**
+		 * Delete nurse
+		 * @param id Nurse id
+		 */
 		public void deleteNurse(int id) {
 			
 			 
