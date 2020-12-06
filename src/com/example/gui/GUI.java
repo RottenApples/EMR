@@ -1427,6 +1427,21 @@ public class GUI implements ActionListener{
 			urineTestPanel.setVisible(false);
 			searchButton.setVisible(false);
 			searchBar.setVisible(false);
+			
+			String[][] tempPatient;
+			tempPatient = db.getPatient();
+			String name[] = new String[tempPatient.length];
+
+			patient2.removeAllItems();
+			for(int i =0; i <tempPatient.length; i++){
+				name[i] =tempPatient[i][0]+" "+tempPatient[i][1]+" "+tempPatient[i][2]; ;
+				patient2.addItem(name[i]);
+
+			}
+
+
+			
+		
 
 		}
 		
@@ -1448,6 +1463,24 @@ public class GUI implements ActionListener{
 			urineTestPanel.setVisible(true);
 			searchButton.setVisible(false);
 			searchBar.setVisible(false);
+			
+			
+			String[][] tempPatient;
+			tempPatient = db.getPatient();
+			String name[] = new String[tempPatient.length];
+			
+			patient4.removeAllItems();
+
+
+			for(int i =0; i <tempPatient.length; i++){
+				name[i] =tempPatient[i][0]+" "+tempPatient[i][1]+" "+tempPatient[i][2]; 
+				patient4.addItem(name[i]);
+
+
+			}
+
+
+			
 
 		}
 		
@@ -1723,6 +1756,32 @@ public class GUI implements ActionListener{
 			urineTestPanel.setVisible(false);
 			searchButton.setVisible(false);
 			searchBar.setVisible(false);
+			
+			
+			String[][] tempPatient;
+			tempPatient = db.getPatient();
+			String name[] = new String[tempPatient.length];
+
+
+			patient.removeAllItems();
+			staffName.removeAllItems();
+			for(int i =0; i <tempPatient.length; i++){
+				name[i] =tempPatient[i][0]+" "+tempPatient[i][1]+" "+tempPatient[i][2]; ;
+				patient.addItem(name[i]);
+
+			}
+
+			String[][] tempStaff;
+			tempStaff = db.getPhysician();
+			String name2[] = new String[tempStaff.length];
+
+			for(int i =0; i <tempStaff.length; i++){
+				name2[i] =tempStaff[i][0]+" "+tempStaff[i][1]+" "+tempStaff[i][2]; ;
+				staffName.addItem(name2[i]);
+
+			}
+
+
 
 		}
 
@@ -1746,6 +1805,32 @@ public class GUI implements ActionListener{
 			searchButton.setVisible(false);
 			searchBar.setVisible(false);
 
+			
+			
+			
+			
+			String[][] tempPatient;
+			tempPatient = db.getPatient();
+			String name[] = new String[tempPatient.length];
+
+
+			patient3.removeAllItems();
+			physician3.removeAllItems();
+			for(int i =0; i <tempPatient.length; i++){
+				name[i] =tempPatient[i][0]+" "+tempPatient[i][1]+" "+tempPatient[i][2]; ;
+				patient3.addItem(name[i]);
+
+			}
+
+			String[][] tempStaff;
+			tempStaff = db.getPhysician();
+			String name2[] = new String[tempStaff.length];
+
+			for(int i =0; i <tempStaff.length; i++){
+				name2[i] =tempStaff[i][0]+" "+tempStaff[i][1]+" "+tempStaff[i][2]; ;
+				physician3.addItem(name2[i]);
+
+			}
 		}
 
 
