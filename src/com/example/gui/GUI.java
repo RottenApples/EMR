@@ -21,7 +21,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import com.example.calendar.Calendar;
+import com.example.calendar.Schedule;
 import com.example.db.Database;
 
 public class GUI implements ActionListener{
@@ -224,7 +224,7 @@ public class GUI implements ActionListener{
 		/*
 		 * ****************************************Calendar***************************************
 		 */
-		Calendar calendar = new Calendar(db);
+		Schedule calendar = new Schedule(db);
 		calendar.setPatient(db.getPatient());
 		calendar.setPhysician(db.getPhysician());
 
